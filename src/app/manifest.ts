@@ -5,8 +5,8 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Time Trackers",
-    short_name: "Time Trackers",
+    name: "The Time Tracker",
+    short_name: "Time Tracker",
     description: "A simple, local-only time tracker",
     start_url: "/",
     display: "standalone",

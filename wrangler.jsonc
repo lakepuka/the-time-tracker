@@ -2,6 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "the-time-tracker",
   "compatibility_date": "2026-07-12",
+  "workers_dev": true,
   "assets": {
     "directory": "./out",
     "not_found_handling": "404-page"

@@ -10,12 +10,12 @@ const rubik = Rubik({
 });
 
 export const metadata: Metadata = {
-  title: "Time Trackers",
+  title: "The Time Tracker",
   description: "A simple, local-only time tracker",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Time Trackers",
+    title: "The Time Tracker",
   },
 };
 
