@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f4f4f5;
+  --foreground: #18181b;
+  --scrollbar-thumb: #d4d4d8;
+}
+
+.dark {
+  --background: #18181b;
+  --foreground: #e4e4e7;
+  --scrollbar-thumb: #52525b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-rubik);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+@keyframes clock-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-clock-spin {
+  animation: clock-spin 2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-clock-spin {
+    animation: none;
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 9999px;
+}
+
+.field-sizing-content {
+  field-sizing: content;
+}
+
+.btn-toy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--toy-border);
+  border-radius: 0.9em;
+  background: var(--toy-bg);
+  color: var(--toy-text);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  padding: 0.75em 1.6em;
+  box-shadow: 0 4px 0 0 var(--toy-shadow);
+  transform: translateY(0);
+  transition:
+    transform 100ms ease,
+    opacity 150ms ease;
+}
+
+.btn-toy:hover:not(:disabled) {
+  background: var(--toy-bg-hover);
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 0 var(--toy-shadow);
+}
+
+.btn-toy:active:not(:disabled) {
+  background: var(--toy-bg-hover);
+  transform: translateY(4px);
+  box-shadow: 0 0 0 0 var(--toy-shadow);
+}
+
+.btn-toy:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-toy-lg {
+  padding: 0.9em 2.2em;
+  font-size: 1.125rem;
+  border-radius: 1em;
+  border-width: 3px;
+  box-shadow: 0 6px 0 0 var(--toy-shadow);
+}
+
+.btn-toy-lg:hover:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 0 var(--toy-shadow);
+}
+
+.btn-toy-lg:active:not(:disabled) {
+  transform: translateY(6px);
+  box-shadow: 0 0 0 0 var(--toy-shadow);
+}
+
+.btn-toy-sm {
+  padding: 0.5em 1.1em;
+  font-size: 0.75rem;
+  border-radius: 0.7em;
+  box-shadow: 0 3px 0 0 var(--toy-shadow);
+}
+
+.btn-toy-sm:hover:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 0 var(--toy-shadow);
+}
+
+.btn-toy-sm:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 0 var(--toy-shadow);
+}
+
+.btn-toy-icon {
+  padding: 0;
+  width: 2.5em;
+  height: 2.5em;
+  font-size: 1rem;
+  border-radius: 0.8em;
+  box-shadow: 0 3px 0 0 var(--toy-shadow);
+}
+
+.btn-toy-icon:hover:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 0 var(--toy-shadow);
+}
+
+.btn-toy-icon:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 0 var(--toy-shadow);
+}
+
+.btn-toy-primary {
+  --toy-border: #5a9bc2;
+  --toy-bg: #eaf7ff;
+  --toy-bg-hover: #d3eeff;
+  --toy-shadow: #bce6fb;
+  --toy-text: #1e3a4a;
+}
+
+.dark .btn-toy-primary {
+  --toy-border: #3d7a9e;
+  --toy-bg: #16323f;
+  --toy-bg-hover: #1c3f4e;
+  --toy-shadow: #0d222b;
+  --toy-text: #d6f0ff;
+}
+
+.btn-toy-danger {
+  --toy-border: #c2748a;
+  --toy-bg: #fff0f0;
+  --toy-bg-hover: #ffe0e2;
+  --toy-shadow: #fecdd3;
+  --toy-text: #4a2230;
+}
+
+.dark .btn-toy-danger {
+  --toy-border: #9e5468;
+  --toy-bg: #3a1e26;
+  --toy-bg-hover: #47252f;
+  --toy-shadow: #2a1519;
+  --toy-text: #ffe1e6;
+}
+
+.btn-toy-neutral {
+  --toy-border: #d4d4d8;
+  --toy-bg: #ffffff;
+  --toy-bg-hover: #fafafa;
+  --toy-shadow: #e4e4e7;
+  --toy-text: #3f3f46;
+}
+
+.dark .btn-toy-neutral {
+  --toy-border: #52525b;
+  --toy-bg: #3f3f46;
+  --toy-bg-hover: #52525b;
+  --toy-shadow: #18181b;
+  --toy-text: #e4e4e7;
+}
