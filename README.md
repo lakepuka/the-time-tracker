@@ -2,6 +2,8 @@
 
 A simple, local-only tracker for work hours and daily habits. Everything runs in your browser — data lives in localStorage, with no accounts, servers, or sync. Installable as a PWA and works offline.
 
+**[Live demo →](https://the-time-tracker.lakepuka.workers.dev/)**
+
 ## Features
 
 - **One-tap timer** — start/stop tracking with a single button; sessions crossing midnight are split automatically
