@@ -1,15 +1,16 @@
 # Time Trackers
 
-A simple, local-only time tracker for side jobs. All data stays in your browser's localStorage — no accounts, no servers, no sync.
+A simple, local-only tracker for work hours and daily habits. Everything runs in your browser — data lives in localStorage, with no accounts, servers, or sync. Installable as a PWA and works offline.
 
 ## Features
 
 - **One-tap timer** — start/stop tracking with a single button; sessions crossing midnight are split automatically
-- **Multiple trackers** — track different jobs in separate tabs, each with its own records
+- **Multiple trackers** — track different jobs or habits in separate tabs, each with its own records
 - **Editable records** — fix dates, times, adjustments (minutes), and notes inline
-- **Calendar heatmap** — see how much you worked each day at a glance; click a day to filter records
+- **Calendar heatmap** — see how much you tracked each day at a glance; click a day to filter records
 - **Monthly totals** — running totals per month with the current month highlighted
 - **CSV import/export** — take your data anywhere
+- **Installable PWA** — add it to your home screen and use it offline
 - **Light/dark theme, English/Japanese UI**
 
 ## Tech Stack
@@ -41,6 +42,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `pnpm format`       | Format with Biome              |
 | `pnpm format:check` | Check formatting without fixes |
 | `pnpm check`        | Biome format + lint + fix      |
+
+## Deploy
+
+The app is a fully static site (no server), so `pnpm build` emits a static `out/` directory you can host anywhere. It's preconfigured for Cloudflare:
+
+- **Cloudflare Pages** — connect the repo; set build command `pnpm build` and output directory `out`.
+- **Cloudflare Workers** — run `npx wrangler deploy` (uses [wrangler.jsonc](wrangler.jsonc), which serves `out/` as static assets).
 
 ## License
 
