@@ -1,6 +1,8 @@
 // Minimal offline cache for a fully static, local-only app.
 // Bump CACHE to invalidate old entries on deploy.
-const CACHE = "ttt-v1";
+// v2 evicts the entries any browser accumulated while the worker was still
+// being registered in development, which pinned stale CSS.
+const CACHE = "ttt-v2";
 const CORE = ["/", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {

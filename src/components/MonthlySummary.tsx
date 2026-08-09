@@ -14,6 +14,7 @@ type MonthlySummaryProps = {
   t: Translations;
 };
 
+/** Month totals; the current month gets a highlighter pass. */
 export function MonthlySummary({
   records,
   now = () => new Date(),
@@ -34,41 +35,20 @@ export function MonthlySummary({
 
   return (
     <div>
-      <h2 className="mb-2 text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-        {t.monthlyTotal}
-      </h2>
-      <ul className="scrollbar-thin flex max-h-56 flex-col divide-y divide-zinc-100 overflow-y-auto pr-1 text-sm dark:divide-zinc-700">
+      <h2 className="ledger-label mb-2 !text-[0.625rem] text-muted">{t.monthlyTotal}</h2>
+      <ul className="scrollbar-thin flex max-h-56 flex-col gap-0.5 overflow-y-auto pr-1">
         {totals.map((total) => {
           const isCurrent = total.month === currentMonthKey;
           return (
             <li
               key={total.month}
               data-current={isCurrent}
-              className={`flex items-center justify-between gap-4 rounded px-1.5 py-1.5 ${
-                isCurrent ? "bg-indigo-50 dark:bg-indigo-950/40" : ""
+              className={`mono flex items-center justify-between px-1.5 text-[12.5px] leading-[1.6] ${
+                isCurrent ? "hl font-semibold text-ink" : "font-medium text-[color:var(--body)]"
               }`}
             >
-              <span
-                className={
-                  isCurrent
-                    ? "flex items-center gap-1.5 font-semibold text-indigo-700 dark:text-indigo-300"
-                    : "text-zinc-600 dark:text-zinc-300"
-                }
-              >
-                {formatMonthLabel(total.month, language)}
-                {isCurrent && (
-                  <span className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-1.5 py-0.5 text-[0.65rem] font-semibold leading-none text-white">
-                    {t.thisMonth}
-                  </span>
-                )}
-              </span>
-              <span
-                className={
-                  isCurrent ? "font-semibold text-indigo-700 dark:text-indigo-300" : "font-medium"
-                }
-              >
-                {formatDurationMinutes(total.totalMinutes, language)}
-              </span>
+              <span>{formatMonthLabel(total.month, language)}</span>
+              <span>{formatDurationMinutes(total.totalMinutes, language)}</span>
             </li>
           );
         })}

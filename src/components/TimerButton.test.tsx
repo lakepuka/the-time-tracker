@@ -27,31 +27,37 @@ describe("TimerButton", () => {
     expect(onToggle).toHaveBeenCalledOnce();
   });
 
-  it("shows the start time when active and a startedAt is given", () => {
+  it("shows the running status with the start time when active", () => {
     const startedAt = new Date(2026, 6, 5, 10, 30, 0).toISOString();
     render(<TimerButton t={ja} isActive onToggle={() => {}} startedAt={startedAt} />);
 
-    expect(screen.getByText("10:30から計測中")).toBeInTheDocument();
+    expect(screen.getByText("計測中 開始 10:30")).toBeInTheDocument();
   });
 
-  it("does not show a start time when not active", () => {
+  it("shows the most recent duration in the idle status", () => {
+    render(<TimerButton t={ja} isActive={false} onToggle={() => {}} lastDurationMinutes={144} />);
+
+    expect(screen.getByText("停止中 直近 2時間24分")).toBeInTheDocument();
+  });
+
+  it("shows a plain stopped status when there is no recent record", () => {
+    render(<TimerButton t={ja} isActive={false} onToggle={() => {}} />);
+
+    expect(screen.getByText("停止中")).toBeInTheDocument();
+  });
+
+  it("does not show the running status when not active", () => {
     const startedAt = new Date(2026, 6, 5, 10, 30, 0).toISOString();
     render(<TimerButton t={ja} isActive={false} onToggle={() => {}} startedAt={startedAt} />);
 
-    expect(screen.queryByText(/から計測中/)).not.toBeInTheDocument();
-  });
-
-  it("does not show a start time when active but no startedAt is given", () => {
-    render(<TimerButton t={ja} isActive onToggle={() => {}} />);
-
-    expect(screen.queryByText(/から計測中/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/計測中/)).not.toBeInTheDocument();
   });
 
   it("shows English labels when given English translations", () => {
     const startedAt = new Date(2026, 6, 5, 10, 30, 0).toISOString();
-    render(<TimerButton t={en} isActive onToggle={() => {}} startedAt={startedAt} />);
+    render(<TimerButton t={en} language="en" isActive onToggle={() => {}} startedAt={startedAt} />);
 
     expect(screen.getByRole("button", { name: "Stop" })).toBeInTheDocument();
-    expect(screen.getByText("Tracking since 10:30")).toBeInTheDocument();
+    expect(screen.getByText("Tracking · since 10:30")).toBeInTheDocument();
   });
 });

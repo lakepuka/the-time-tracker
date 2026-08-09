@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CloseIcon, SettingsIcon } from "@/components/icons";
 import { useColorSchemeMode } from "@/hooks/useColorSchemeMode";
 import { useCsvImport } from "@/hooks/useCsvImport";
 import { usePopover } from "@/hooks/usePopover";
@@ -28,6 +29,7 @@ type ToggleProps = {
   onChange: (value: boolean) => void;
 };
 
+/** A paper switch: an outlined square that slides along a ruled track. */
 function Toggle({ label, checked, onChange }: ToggleProps) {
   return (
     <button
@@ -36,13 +38,15 @@ function Toggle({ label, checked, onChange }: ToggleProps) {
       aria-checked={checked}
       aria-label={label}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-        checked ? "bg-sky-500 dark:bg-sky-600" : "bg-zinc-300 dark:bg-zinc-600"
-      }`}
+      className="relative inline-flex h-5 w-11 shrink-0 items-center"
     >
+      <span className="h-px w-full bg-[color:var(--edge-strong)]" aria-hidden />
       <span
-        className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-          checked ? "translate-x-4" : "translate-x-0.5"
+        aria-hidden
+        className={`absolute top-0 h-5 w-5 border bg-paper transition-[left] duration-150 ${
+          checked
+            ? "left-6 border-[color:var(--brand)]"
+            : "left-0 border-[color:var(--edge-strong)]"
         }`}
       />
     </button>
@@ -55,23 +59,26 @@ type SegmentedControlProps<T extends string> = {
   onChange: (id: T) => void;
 };
 
+/** Adjacent cells sharing one 1px rule, like an option table on the sheet. */
 function SegmentedControl<T extends string>({
   options,
   value,
   onChange,
 }: SegmentedControlProps<T>) {
   return (
-    <div className="mb-4 flex gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-900">
-      {options.map((option) => (
+    <div className="mb-4 flex border border-[color:var(--tab-idle-edge)]">
+      {options.map((option, index) => (
         <button
           key={option.id}
           type="button"
           aria-pressed={value === option.id}
           onClick={() => onChange(option.id)}
-          className={`flex-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+          className={`min-h-8 flex-1 px-2 py-1 text-[0.6875rem] ${
+            index > 0 ? "border-l border-[color:var(--tab-idle-edge)]" : ""
+          } ${
             value === option.id
-              ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-50"
-              : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              ? "bg-[color:var(--field-bg)] font-semibold text-[color:var(--brand)]"
+              : "text-[color:var(--body)] hover:text-[color:var(--brand)]"
           }`}
         >
           {option.label}
@@ -117,34 +124,33 @@ export function SettingsButton({
     setNewTabName("");
   }
 
+  const sectionLabel = "ledger-label mb-2 !text-[0.625rem] text-muted";
+
   return (
     <div ref={containerRef} className="relative">
       <button
         type="button"
         aria-label={t.settingsLabel}
+        aria-expanded={isOpen}
         onClick={() => setIsOpen((open) => !open)}
-        className="btn-toy btn-toy-icon btn-toy-neutral !text-lg leading-none"
+        className="chip !h-8 !w-8 !min-h-0 !px-0"
       >
-        ⚙
+        <SettingsIcon className="h-4 w-4" />
       </button>
       {isOpen && (
-        <div className="absolute right-0 top-full z-20 mt-3 w-64 rounded-2xl border-2 border-zinc-200 bg-white p-3 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
-          <h2 className="mb-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400">{t.theme}</h2>
+        <div className="absolute right-0 top-full z-20 mt-2 w-68 border border-[color:var(--edge-strong)] bg-paper p-3">
+          <h2 className={sectionLabel}>{t.theme}</h2>
           <SegmentedControl options={modeOptions} value={mode} onChange={setMode} />
 
-          <h2 className="mb-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-            {t.language}
-          </h2>
+          <h2 className={sectionLabel}>{t.language}</h2>
           <SegmentedControl options={LANGUAGES} value={language} onChange={onChangeLanguage} />
 
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{t.summary}</h2>
+            <h2 className="ledger-label !text-[0.625rem] text-muted">{t.summary}</h2>
             <Toggle label={t.summary} checked={showSummary} onChange={onChangeShowSummary} />
           </div>
 
-          <h2 className="mb-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-            {t.tabsLabel}
-          </h2>
+          <h2 className={sectionLabel}>{t.tabsLabel}</h2>
           <ul className="mb-2 flex flex-col gap-1">
             {tabs.map((tab) => (
               <li key={tab.id} className="flex items-center gap-2">
@@ -152,34 +158,34 @@ export function SettingsButton({
                   type="text"
                   value={tab.name}
                   onChange={(event) => onRenameTab(tab.id, event.target.value)}
-                  className="min-w-0 flex-1 rounded border border-transparent bg-transparent px-1.5 py-0.5 text-sm text-zinc-700 hover:border-zinc-300 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-zinc-200 dark:hover:border-zinc-600"
+                  className="field min-w-0 flex-1"
                 />
                 {tabs.length > 1 && (
                   <button
                     type="button"
                     aria-label={formatTemplate(t.deleteTabAriaLabel, tab.name)}
                     onClick={() => handleRemoveTab(tab)}
-                    className="rounded px-1.5 py-0.5 text-xs text-zinc-400 hover:bg-zinc-100 hover:text-red-600 dark:hover:bg-zinc-700 dark:hover:text-red-400"
+                    className="text-[color:var(--del)] hover:text-[color:var(--stop)]"
                   >
-                    ×
+                    <CloseIcon className="h-3.5 w-3.5" />
                   </button>
                 )}
               </li>
             ))}
           </ul>
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <input
               type="text"
               value={newTabName}
               onChange={(event) => setNewTabName(event.target.value)}
               placeholder={t.newTabPlaceholder}
-              className="min-w-0 flex-1 rounded border border-zinc-300 px-1.5 py-1 text-xs dark:border-zinc-600 dark:bg-zinc-900"
+              className="field field--boxed min-w-0 flex-1"
             />
             <button
               type="button"
               onClick={handleAddTab}
               disabled={newTabName.trim().length === 0}
-              className="btn-toy btn-toy-sm btn-toy-primary"
+              className="chip shrink-0"
             >
               {t.add}
             </button>
@@ -192,11 +198,7 @@ export function SettingsButton({
             className="hidden"
             onChange={handleFileChange}
           />
-          <button
-            type="button"
-            onClick={triggerImport}
-            className="btn-toy btn-toy-sm btn-toy-neutral mt-4 w-full"
-          >
+          <button type="button" onClick={triggerImport} className="chip mt-4 w-full">
             {t.csvImport}
           </button>
         </div>

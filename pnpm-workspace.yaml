@@ -1,6 +1,24 @@
+# Dependency lifecycle scripts are denied by default (pnpm 10+); only these may
+# run one. This is what stops a compromised package's preinstall from executing.
+# esbuild and workerd are wrangler's first-party native deps: their build scripts
+# only fetch the platform binary, so they are trusted and required to deploy.
 allowBuilds:
+  esbuild: true
   sharp: true
   unrs-resolver: true
+  workerd: true
 onlyBuiltDependencies:
+  - esbuild
   - sharp
   - unrs-resolver
+  - workerd
+
+# Don't resolve a version until it has been public for 3 days, so a compromised
+# release has time to be caught and unpublished before it can enter the lockfile.
+# pnpm 11 already defaults to 1440 (24h); setting it explicitly pins the policy
+# for anyone on pnpm 10 and turns on minimumReleaseAgeStrict, which fails the
+# resolution instead of silently falling back to an older version.
+#
+# pnpm 11 also audits the entries already in the lockfile on every install, not
+# just versions it resolves fresh, so `install --frozen-lockfile` is covered too.
+minimumReleaseAge: 4320

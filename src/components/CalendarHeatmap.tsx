@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import {
   daysInMonth,
   firstWeekdayOfMonth,
-  formatYearMonthLabel,
   shiftMonth,
   toDateKey,
   type YearMonth,
 } from "@/lib/calendarMonth";
 import { computeDailyTotals, formatHoursShort, heatLevel } from "@/lib/dailyTotals";
-import { weekdayLabels } from "@/lib/dateTimeInput";
+import { toDateKeyFromDate, weekdayLabels } from "@/lib/dateTimeInput";
 import type { Language, Translations } from "@/lib/i18n";
 import type { WorkRecord } from "@/lib/records";
 
@@ -23,12 +23,24 @@ type CalendarHeatmapProps = {
   t: Translations;
 };
 
-const heatLevelClass: Record<0 | 1 | 2 | 3 | 4, string> = {
-  0: "bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500",
-  1: "bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-200",
-  2: "bg-blue-200 text-blue-900 dark:bg-blue-900 dark:text-blue-100",
-  3: "bg-blue-400 text-white dark:bg-blue-700 dark:text-white",
-  4: "bg-blue-600 text-white dark:bg-blue-500 dark:text-white",
+/*
+ * Navy fill whose weight tracks the day's total. Filled cells stay legible with
+ * white numerals; the two lightest levels keep ink text on a tinted ground.
+ */
+const levelStyle: Record<0 | 1 | 2 | 3 | 4, { background: string; color: string }> = {
+  0: { background: "transparent", color: "var(--muted)" },
+  1: { background: "rgba(28,63,110,0.10)", color: "var(--brand)" },
+  2: { background: "rgba(28,63,110,0.22)", color: "#152f52" },
+  3: { background: "rgba(28,63,110,0.55)", color: "#fff" },
+  4: { background: "rgba(28,63,110,0.88)", color: "#fff" },
+};
+
+const darkLevelStyle: Record<0 | 1 | 2 | 3 | 4, { background: string; color: string }> = {
+  0: { background: "transparent", color: "var(--muted)" },
+  1: { background: "rgba(143,179,224,0.14)", color: "var(--brand)" },
+  2: { background: "rgba(143,179,224,0.28)", color: "#cfe0f5" },
+  3: { background: "rgba(143,179,224,0.55)", color: "#0f151c" },
+  4: { background: "rgba(143,179,224,0.85)", color: "#0f151c" },
 };
 
 export function CalendarHeatmap({
@@ -40,17 +52,22 @@ export function CalendarHeatmap({
   t,
 }: CalendarHeatmapProps) {
   const [viewedMonth, setViewedMonth] = useState<YearMonth | null>(null);
+  const [todayKey, setTodayKey] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState(false);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount; deferring to the client avoids an SSR hydration mismatch
   useEffect(() => {
     const current = now();
     setViewedMonth({ year: current.getFullYear(), month: current.getMonth() });
+    setTodayKey(toDateKeyFromDate(current));
+    setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
   if (!viewedMonth) {
     return null;
   }
 
+  const palette = isDark ? darkLevelStyle : levelStyle;
   const dailyTotals = computeDailyTotals(records);
   const totalDays = daysInMonth(viewedMonth.year, viewedMonth.month);
   const leadingBlanks = firstWeekdayOfMonth(viewedMonth.year, viewedMonth.month);
@@ -67,57 +84,68 @@ export function CalendarHeatmap({
     onSelectDate(selectedDate === dateKey ? null : dateKey);
   }
 
+  const monthLabel = `${viewedMonth.year} / ${String(viewedMonth.month + 1).padStart(2, "0")}`;
+
   return (
-    <div className="w-full shrink-0 sm:w-[240px] lg:w-full">
-      <div className="mb-1.5 flex items-center justify-between">
+    <div className="w-full shrink-0 sm:w-[248px] lg:w-full">
+      <div className="mb-2 flex items-center justify-between">
         <button
           type="button"
           aria-label={t.prevMonth}
           onClick={() => setViewedMonth((prev) => prev && shiftMonth(prev, -1))}
-          className="rounded px-1.5 py-0.5 text-xs hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          className="chip chip--ghost !min-h-0 px-1 py-0.5 text-muted hover:text-brand"
         >
-          ◀
+          <ChevronLeftIcon className="h-4 w-4" />
         </button>
-        <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
-          {formatYearMonthLabel(viewedMonth, language)}
+        <span className="mono text-xs font-bold tracking-[0.1em] text-[color:var(--ink-logo)]">
+          {monthLabel}
         </span>
         <button
           type="button"
           aria-label={t.nextMonth}
           onClick={() => setViewedMonth((prev) => prev && shiftMonth(prev, 1))}
-          className="rounded px-1.5 py-0.5 text-xs hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          className="chip chip--ghost !min-h-0 px-1 py-0.5 text-muted hover:text-brand"
         >
-          ▶
+          <ChevronRightIcon className="h-4 w-4" />
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-0.5 text-center">
-        {weekdayLabels(language).map((label) => (
-          <div key={label} className="text-[0.6rem] font-medium text-zinc-400 dark:text-zinc-500">
-            {label}
+      <div className="cal-grid">
+        {weekdayLabels(language).map((weekdayName) => (
+          <div
+            key={weekdayName}
+            className="mono pb-0.5 text-center text-[0.5625rem] font-semibold text-muted"
+          >
+            {weekdayName}
           </div>
         ))}
         {cells.map((cell, index) => {
           if (!cell) {
-            // biome-ignore lint/suspicious/noArrayIndexKey: leading blanks are static positional placeholders with no stable id
+            // biome-ignore lint/suspicious/noArrayIndexKey: blanks are static positional placeholders with no stable id
             return <div key={`blank-${index}`} />;
           }
 
           const minutes = dailyTotals[cell.dateKey] ?? 0;
           const level = heatLevel(minutes);
           const isSelected = selectedDate === cell.dateKey;
+          const { background, color } = palette[level];
 
           return (
             <button
               key={cell.dateKey}
               type="button"
               onClick={() => handleDayClick(cell.dateKey)}
+              data-today={cell.dateKey === todayKey}
               aria-label={`${cell.day}${language === "en" ? "" : "日"}${minutes > 0 ? ` ${formatHoursShort(minutes)}` : ""}`}
-              className={`flex aspect-square flex-col items-center justify-center rounded text-[0.65rem] leading-none ${heatLevelClass[level]} ${
-                isSelected ? "ring-2 ring-offset-1 ring-blue-600 dark:ring-blue-400" : ""
-              }`}
+              aria-pressed={isSelected}
+              className="cal-cell"
+              style={{
+                background,
+                color,
+                boxShadow: isSelected ? "inset 0 0 0 1px var(--brand)" : undefined,
+              }}
             >
               <span>{cell.day}</span>
-              {minutes > 0 && <span className="text-[0.55rem]">{formatHoursShort(minutes)}</span>}
+              {minutes > 0 && <span className="cal-cell__h">{formatHoursShort(minutes)}</span>}
             </button>
           );
         })}

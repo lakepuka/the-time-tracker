@@ -10,8 +10,9 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "A simple, local-only time tracker",
     start_url: "/",
     display: "standalone",
-    background_color: "#f4f4f5",
-    theme_color: "#4f46e5",
+    // Cream paper and the indigo brand accent.
+    background_color: "#fbfaf6",
+    theme_color: "#1c3f6e",
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
       { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },

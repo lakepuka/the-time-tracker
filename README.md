@@ -2,7 +2,7 @@
 
 A simple, local-only tracker for work hours and daily habits. Everything runs in your browser — data lives in localStorage, with no accounts, servers, or sync. Installable as a PWA and works offline.
 
-**[Live demo →](https://the-time-tracker.lakepuka.workers.dev/)**
+**[Live demo →](https://the-time-tracker.lakepuka.com/)**
 
 ## Features
 
@@ -50,7 +50,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 The app is a fully static site (no server), so `pnpm build` emits a static `out/` directory you can host anywhere. It's preconfigured for Cloudflare:
 
 - **Cloudflare Pages** — connect the repo; set build command `pnpm build` and output directory `out`.
-- **Cloudflare Workers** — run `npx wrangler deploy` (uses [wrangler.jsonc](wrangler.jsonc), which serves `out/` as static assets).
+- **Cloudflare Workers** — run `pnpm run deploy` (builds `out/` then runs `wrangler deploy`; see [wrangler.jsonc](wrangler.jsonc), which serves `out/` as static assets). Use `run` — plain `pnpm deploy` is a different built-in pnpm command.
 
 ## License
 

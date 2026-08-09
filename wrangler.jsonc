@@ -2,7 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "the-time-tracker",
   "compatibility_date": "2026-07-12",
-  "workers_dev": true,
+  // Served only from the custom domain. Records live in localStorage, which is
+  // scoped per origin, so a second hostname would split a user's data in two.
+  "workers_dev": false,
   "assets": {
     "directory": "./out",
     "not_found_handling": "404-page"

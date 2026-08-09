@@ -2,6 +2,7 @@
 
 import { type ChangeEvent, useState } from "react";
 import { DateEditPopover } from "@/components/DateEditPopover";
+import { CloseIcon } from "@/components/icons";
 import { combineDateAndTime, toDisplayDate, toTimeInputValue } from "@/lib/dateTimeInput";
 import { computeNetDurationMinutes, formatDurationMinutes } from "@/lib/duration";
 import type { Language, Translations } from "@/lib/i18n";
@@ -17,15 +18,7 @@ type RecordRowProps = {
   t: Translations;
 };
 
-const editableInputClass =
-  "rounded border border-zinc-300 bg-white px-1 py-0.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-900";
-
-const deleteTriggerClass =
-  "rounded-lg border-2 border-zinc-300 px-2 py-0.5 font-bold text-zinc-600 hover:border-red-400 hover:text-red-600 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-red-500 dark:hover:text-red-400";
-const deleteConfirmClass =
-  "rounded-lg border-2 border-red-400 bg-red-500 px-2 py-0.5 font-bold text-white hover:bg-red-600 dark:border-red-500 dark:bg-red-600 dark:hover:bg-red-500";
-const deleteCancelClass =
-  "rounded-lg border-2 border-zinc-300 px-1.5 py-0.5 font-bold text-zinc-500 hover:text-zinc-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-100";
+const timeFieldClass = "field mono w-14 text-[12.5px] text-[color:var(--body-strong)]";
 
 export function RecordRow({
   record,
@@ -62,96 +55,104 @@ export function RecordRow({
     setIsConfirmingDelete(false);
   }
 
+  const netMinutes = record.endedAt
+    ? computeNetDurationMinutes(record.startedAt, record.endedAt, record.adjustmentMinutes ?? 0)
+    : null;
+
   return (
-    <tr className="border-b border-zinc-200 dark:border-zinc-800">
-      <td className="py-1.5 pr-3">
+    <div className="rec">
+      <div className="rec__head">
         <DateEditPopover
           value={record.date}
           onChange={handleDateChange}
           label={isSameDateAsPrevious ? "〃" : toDisplayDate(record.date)}
           triggerClassName={
             isSameDateAsPrevious
-              ? "w-full text-center text-zinc-400 hover:text-blue-600 dark:text-zinc-500 dark:hover:text-blue-400"
-              : `${editableInputClass} block w-full text-left`
+              ? "mono block w-full text-left text-xs text-muted hover:text-brand"
+              : "field mono block w-full text-left text-[color:var(--body-strong)]"
           }
           language={language}
           t={t}
         />
-      </td>
-      <td className="py-1.5 pr-3">
-        <div className="flex items-center gap-1">
+
+        <div className="flex items-center gap-1.5">
           <input
             type="time"
+            aria-label={t.columnTime}
             value={toTimeInputValue(record.startedAt)}
             onChange={(event) => handleTimeChange("startedAt", event)}
-            className={editableInputClass}
+            className={timeFieldClass}
           />
-          <span>〜</span>
+          <span className="text-muted" aria-hidden>
+            –
+          </span>
           {record.endedAt ? (
             <input
               type="time"
+              aria-label={t.columnTime}
               value={toTimeInputValue(record.endedAt)}
               onChange={(event) => handleTimeChange("endedAt", event)}
-              className={editableInputClass}
+              className={timeFieldClass}
             />
           ) : (
-            <span className="text-zinc-500 dark:text-zinc-400">{t.inProgress}</span>
+            <span className="mono w-14 text-[12.5px] text-live">{t.inProgress}</span>
           )}
         </div>
-      </td>
-      <td className="py-1.5 pr-3">
+
         <input
           type="number"
+          aria-label={t.columnAdjustment}
           value={record.adjustmentMinutes ?? 0}
           onChange={handleAdjustmentChange}
-          className={`${editableInputClass} w-16`}
+          className="field mono w-12 text-right"
         />
-      </td>
-      <td className="whitespace-nowrap py-1.5 pr-3">
-        {record.endedAt
-          ? formatDurationMinutes(
-              computeNetDurationMinutes(
-                record.startedAt,
-                record.endedAt,
-                record.adjustmentMinutes ?? 0,
-              ),
-              language,
-            )
-          : "-"}
-      </td>
-      <td className="min-w-[140px] py-1.5 pr-3">
+
+        <span className="mono text-[13px] font-semibold text-ink">
+          {netMinutes != null ? formatDurationMinutes(netMinutes, language) : "—"}
+        </span>
+      </div>
+
+      <div className="rec__note min-w-0">
         <input
           type="text"
+          aria-label={t.columnMemo}
           value={record.memo ?? ""}
           onChange={handleMemoChange}
-          className={`${editableInputClass} w-full`}
+          placeholder={t.columnMemo}
+          className="field w-full text-[color:var(--body)]"
         />
-      </td>
-      <td className="whitespace-nowrap py-1.5 pr-3">
+      </div>
+
+      <div className="rec__del">
         {isConfirmingDelete ? (
           <div className="flex items-center gap-1">
-            <button type="button" onClick={handleConfirmDelete} className={deleteConfirmClass}>
+            <button
+              type="button"
+              onClick={handleConfirmDelete}
+              className="chip !min-h-0 border-[color:var(--stop)] px-2 py-0.5 text-[color:var(--stop)] hover:!border-[color:var(--stop-hover)] hover:!text-[color:var(--stop-hover)]"
+            >
               {t.deleteLabel}
             </button>
             <button
               type="button"
               aria-label={t.cancel}
               onClick={() => setIsConfirmingDelete(false)}
-              className={deleteCancelClass}
+              className="chip chip--ghost !min-h-0 px-1 py-0.5"
             >
-              ✕
+              <CloseIcon className="h-3.5 w-3.5" />
             </button>
           </div>
         ) : (
           <button
             type="button"
+            aria-label={t.deleteLabel}
             onClick={() => setIsConfirmingDelete(true)}
-            className={deleteTriggerClass}
+            className="text-[color:var(--del)] hover:text-[color:var(--stop)]"
           >
-            {t.deleteLabel}
+            <CloseIcon className="h-3.5 w-3.5" />
           </button>
         )}
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }

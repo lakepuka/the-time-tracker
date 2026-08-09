@@ -6,6 +6,12 @@ export function ServiceWorkerRegister() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
 
+    // Never register in development. The cache is cache-first, which is correct
+    // for the production build because its asset filenames are content-hashed —
+    // but dev serves stable paths, so an edited stylesheet would be pinned to
+    // the first version the browser ever saw.
+    if (process.env.NODE_ENV !== "production") return;
+
     function register() {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }

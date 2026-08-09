@@ -2,218 +2,564 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Graph-paper ledger.
+ *
+ * A record sheet: cream paper ruled with a fine 10px / bold 40px grid, navy
+ * ink, one indigo accent, and a red reserved for the running timer and stop
+ * action. No shadows — depth is a thick bottom border on "paper" controls.
+ * Numerals are always IBM Plex Mono with tabular figures.
+ */
 :root {
-  --background: #f4f4f5;
-  --foreground: #18181b;
-  --scrollbar-thumb: #d4d4d8;
+  color-scheme: light;
+
+  --paper: #fbfaf6;
+  --grid-fine: rgba(40, 70, 120, 0.035);
+  --grid-bold: rgba(40, 70, 120, 0.135);
+
+  --ink: #12233a; /* headings, totals, primary numerals */
+  --ink-logo: #1c2b3f; /* logo, section labels */
+  --body: #4b5666; /* record memo, body */
+  --body-strong: #3d4859; /* time ranges */
+  --muted: #7d8494; /* sublabels, captions */
+
+  --brand: #1c3f6e; /* indigo accent */
+  --brand-strong: #12233a; /* pressed / strong borders */
+  --brand-hover: #254f86;
+
+  --stop: #a8322a;
+  --stop-border: #6d1f19;
+  --stop-hover: #bd3a31;
+  --live: #b03a2e; /* "measuring" indicator */
+
+  --edge-strong: #c9c4b6; /* card frame, section dividers */
+  --edge-weak: #d9d4c6; /* soft dividers */
+  --rule-solid: #cfd6e0; /* group header underline */
+  --rule-dotted: #ccd2dc; /* row separators */
+  --rule-top: #12233a; /* list top rule */
+  --tab-idle: #6a7180;
+  --tab-idle-edge: #d5d0c2;
+  --del: #a8afba;
+
+  --panel: #fbfaf6; /* opaque bands over the grid */
+  --panel-alpha: rgba(251, 250, 246, 0.86);
+  --field-bg: #ffffff;
+  --row-hover: rgba(28, 63, 110, 0.05);
+  --cal-today: #b03a2e;
+
+  --hl-a: rgba(255, 232, 102, 0.92);
+  --hl-b: rgba(255, 224, 70, 0.85);
+  --hl-c: rgba(255, 238, 124, 0.92);
 }
 
+/*
+ * Dark variant. Not part of the light-only handoff — a restrained extrapolation
+ * so the existing theme toggle doesn't land users on an unstyled screen: the
+ * paper becomes deep ink-blue, the grid dims, and the accents lift for contrast.
+ */
 .dark {
-  --background: #18181b;
-  --foreground: #e4e4e7;
-  --scrollbar-thumb: #52525b;
+  color-scheme: dark;
+
+  --paper: #0f151c;
+  --grid-fine: rgba(120, 160, 220, 0.04);
+  --grid-bold: rgba(120, 160, 220, 0.1);
+
+  --ink: #e7ecf3;
+  --ink-logo: #d6deea;
+  --body: #aab4c2;
+  --body-strong: #c2ccd9;
+  --muted: #7f8a9a;
+
+  --brand: #8fb3e0;
+  --brand-strong: #b7d0f0;
+  --brand-hover: #a6c4ea;
+
+  --stop: #e2705f;
+  --stop-border: #f0917f;
+  --stop-hover: #ec8574;
+  --live: #e2705f;
+
+  --edge-strong: #2b3542;
+  --edge-weak: #232c38;
+  --rule-solid: #2a3646;
+  --rule-dotted: #263140;
+  --rule-top: #566577;
+  --tab-idle: #8590a0;
+  --tab-idle-edge: #2b3542;
+  --del: #5c6675;
+
+  --panel: #0f151c;
+  --panel-alpha: rgba(15, 21, 28, 0.86);
+  --field-bg: #161d26;
+  --row-hover: rgba(143, 179, 224, 0.08);
+  --cal-today: #e2705f;
+
+  --hl-a: rgba(120, 150, 90, 0.32);
+  --hl-b: rgba(140, 170, 80, 0.3);
+  --hl-c: rgba(120, 150, 90, 0.32);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-rubik);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-brand: var(--brand);
+  --color-stop: var(--stop);
+  --color-live: var(--live);
+  --color-muted: var(--muted);
+  --color-body: var(--body);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-}
+@layer base {
+  html,
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+  }
 
-@keyframes clock-spin {
-  to {
-    transform: rotate(360deg);
+  /* The grid is laid once, on the page behind the sheet. */
+  body {
+    font-family: var(--font-plex-sans), "Hiragino Sans", "Noto Sans JP", sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      linear-gradient(var(--grid-fine) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-fine) 1px, transparent 1px),
+      linear-gradient(var(--grid-bold) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-bold) 1px, transparent 1px);
+    background-size:
+      10px 10px,
+      10px 10px,
+      40px 40px,
+      40px 40px;
+  }
+
+  :where(button, input, select, textarea) {
+    font: inherit;
+    color: inherit;
+    background: none;
+  }
+
+  :where(button):not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* Focus is a ring offset from the control. */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  /* Drop the native clock button: it eats ~17px and clutters the ledger. The
+     time is still editable by typing or arrow keys. */
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
   }
 }
 
-.animate-clock-spin {
-  animation: clock-spin 2s linear infinite;
+/*
+ * Component classes live in the `components` layer so plain Tailwind utilities
+ * still override them at call sites.
+ */
+@layer components {
+  /* ------------------------------------------------------------- typography */
+
+  .mono {
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Section label: RECORDS / MONTHLY / ELAPSED — mono, tracked, uppercase. */
+  .ledger-label {
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-logo);
+  }
+
+  /* ------------------------------------------------------------------ sheet */
+
+  .sheet {
+    background: var(--panel-alpha);
+    border: 1px solid var(--edge-strong);
+  }
+
+  /* Opaque bands so the grid doesn't bleed through headers/timer. */
+  .band {
+    background: var(--panel-alpha);
+  }
+
+  /* ------------------------------------------------------------ paper button */
+
+  /*
+   * A pressable paper chip: a thick bottom border is the "lift", and pressing
+   * sinks it (border shrinks, control drops) instead of casting a shadow.
+   */
+  .paper-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    border: 1px solid var(--brand-strong);
+    border-bottom-width: 5px;
+    background: var(--brand);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 1.15rem 2.75rem;
+    border-radius: 2px;
+    transition:
+      background-color 120ms ease-out,
+      transform 120ms ease-out,
+      border-bottom-width 120ms ease-out;
+  }
+
+  .paper-btn:hover:not(:disabled) {
+    background: var(--brand-hover);
+  }
+
+  .paper-btn:active:not(:disabled) {
+    border-bottom-width: 2px;
+    transform: translateY(3px);
+  }
+
+  .paper-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Doubled specificity so the stop variant wins regardless of the order
+     Tailwind emits these same-specificity component rules in. */
+  .paper-btn.paper-btn--stop {
+    background: var(--stop);
+    border-color: var(--stop-border);
+  }
+
+  .paper-btn.paper-btn--stop:hover:not(:disabled) {
+    background: var(--stop-hover);
+  }
+
+  /* Small utility chip (CSV, settings, add-tab): ledger-outlined, not filled. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    min-height: 1.9rem;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid var(--tab-idle-edge);
+    background: none;
+    color: var(--body);
+    font-size: 0.75rem;
+    border-radius: 0;
+    transition:
+      border-color 120ms ease-out,
+      color 120ms ease-out,
+      background-color 120ms ease-out;
+  }
+
+  .chip:hover:not(:disabled) {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+
+  .chip:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .chip--ghost {
+    border-color: transparent;
+  }
+
+  .chip--ghost:hover:not(:disabled) {
+    border-color: transparent;
+    color: var(--brand);
+  }
+
+  /* ---------------------------------------------------------------- tabs */
+
+  /* Tabs read as index cards: filled + heavy underline when active. */
+  .tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--tab-idle);
+    border: 1px solid var(--tab-idle-edge);
+    border-radius: 0;
+    transition:
+      color 120ms ease-out,
+      border-color 120ms ease-out;
+  }
+
+  .tab:hover {
+    color: var(--brand);
+    border-color: var(--brand);
+  }
+
+  .tab[aria-current="true"] {
+    color: #0f2947;
+    font-weight: 600;
+    background: var(--field-bg);
+    border-color: var(--brand);
+    border-bottom-width: 3px;
+  }
+
+  .dark .tab[aria-current="true"] {
+    color: var(--ink);
+  }
+
+  .tab-add {
+    flex-shrink: 0;
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--brand);
+    border: 1px dashed #9fb1c9;
+    border-radius: 0;
+  }
+
+  .dark .tab-add {
+    border-color: #3d5a80;
+  }
+
+  .tab-add:hover {
+    border-style: solid;
+  }
+
+  /* ------------------------------------------------------------- form fields */
+
+  /* Fields are underlines you write on, transparent until focused. */
+  .field {
+    min-height: 1.75rem;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    background: none;
+    padding: 1px 2px;
+    color: var(--ink);
+    border-radius: 0;
+  }
+
+  .field:hover {
+    border-bottom-color: var(--edge-weak);
+  }
+
+  .field:focus {
+    outline: none;
+    border-bottom-color: var(--brand);
+  }
+
+  .field--boxed {
+    border: 1px solid var(--tab-idle-edge);
+    background: var(--field-bg);
+    padding: 0.25rem 0.45rem;
+    min-height: auto;
+  }
+
+  .field--boxed:focus {
+    border-color: var(--brand);
+  }
+
+  /* -------------------------------------------------------------- record row */
+
+  /*
+   * One grid, two shapes. Mobile stacks the fields under a header line; from
+   * 640px the head group becomes `display: contents` so each field is a column.
+   */
+  .rec {
+    display: grid;
+    align-items: center;
+    column-gap: 0.625rem;
+    row-gap: 0.25rem;
+    padding: 0.4rem 0.125rem;
+    border-bottom: 1px dotted var(--rule-dotted);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "head del"
+      "note note";
+    transition: background-color 120ms ease-out;
+  }
+
+  .rec:hover {
+    background: var(--row-hover);
+  }
+
+  .rec__head {
+    grid-area: head;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem 0.75rem;
+  }
+
+  .rec__note {
+    grid-area: note;
+  }
+
+  .rec__del {
+    grid-area: del;
+    justify-self: end;
+    color: var(--del);
+  }
+
+  .rec__del:hover {
+    color: var(--stop);
+  }
+
+  @media (min-width: 640px) {
+    .rec {
+      grid-template-areas: none;
+      grid-template-columns: 108px 150px 50px 66px minmax(0, 1fr) 1.5rem;
+    }
+
+    .rec__head {
+      display: contents;
+    }
+
+    .rec__note,
+    .rec__del {
+      grid-area: auto;
+    }
+  }
+
+  /* Column header for the records list, shown only on the wide layout. */
+  .rec-headrow {
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .rec-headrow {
+      display: grid;
+      align-items: end;
+      column-gap: 0.625rem;
+      padding: 0 0.125rem 0.375rem;
+      grid-template-columns: 108px 150px 50px 66px minmax(0, 1fr) 1.5rem;
+    }
+  }
+
+  /* ------------------------------------------------------------- month plate */
+
+  /* Calendar: filled cells whose navy weight tracks the day's total. */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  .cal-cell {
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    border-radius: 0;
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.6875rem;
+    line-height: 1.1;
+  }
+
+  .cal-cell__h {
+    font-size: 0.5rem;
+    font-weight: 500;
+    opacity: 0.85;
+  }
+
+  .cal-cell[data-today="true"] {
+    outline: 2px solid var(--cal-today);
+    outline-offset: -2px;
+  }
+
+  /* Highlighter over the current month's row, like a felt-tip pass. */
+  .hl {
+    background-image: linear-gradient(
+      100deg,
+      transparent 0.6%,
+      var(--hl-a) 2.2%,
+      var(--hl-b) 55%,
+      var(--hl-c) 96%,
+      transparent 99.4%
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 86%;
+    background-position: 0 62%;
+    mix-blend-mode: multiply;
+  }
+
+  .dark .hl {
+    mix-blend-mode: screen;
+  }
+
+  /* ---------------------------------------------------------------- scrollbar */
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--edge-strong) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--edge-strong);
+  }
+
+  .field-sizing-content {
+    field-sizing: content;
+  }
+} /* @layer components */
+
+/* ------------------------------------------------------------------- motion */
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-clock-spin {
-    animation: none;
+  /* biome-ignore-start lint/complexity/noImportantStyles: must beat every animation/transition, Tailwind utilities included */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-
-.scrollbar-thin {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb);
-  border-radius: 9999px;
-}
-
-.field-sizing-content {
-  field-sizing: content;
-}
-
-.btn-toy {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5em;
-  border-style: solid;
-  border-width: 2px;
-  border-color: var(--toy-border);
-  border-radius: 0.9em;
-  background: var(--toy-bg);
-  color: var(--toy-text);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  padding: 0.75em 1.6em;
-  box-shadow: 0 4px 0 0 var(--toy-shadow);
-  transform: translateY(0);
-  transition:
-    transform 100ms ease,
-    opacity 150ms ease;
-}
-
-.btn-toy:hover:not(:disabled) {
-  background: var(--toy-bg-hover);
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 0 var(--toy-shadow);
-}
-
-.btn-toy:active:not(:disabled) {
-  background: var(--toy-bg-hover);
-  transform: translateY(4px);
-  box-shadow: 0 0 0 0 var(--toy-shadow);
-}
-
-.btn-toy:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.btn-toy-lg {
-  padding: 0.9em 2.2em;
-  font-size: 1.125rem;
-  border-radius: 1em;
-  border-width: 3px;
-  box-shadow: 0 6px 0 0 var(--toy-shadow);
-}
-
-.btn-toy-lg:hover:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 3px 0 0 var(--toy-shadow);
-}
-
-.btn-toy-lg:active:not(:disabled) {
-  transform: translateY(6px);
-  box-shadow: 0 0 0 0 var(--toy-shadow);
-}
-
-.btn-toy-sm {
-  padding: 0.5em 1.1em;
-  font-size: 0.75rem;
-  border-radius: 0.7em;
-  box-shadow: 0 3px 0 0 var(--toy-shadow);
-}
-
-.btn-toy-sm:hover:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: 0 2px 0 0 var(--toy-shadow);
-}
-
-.btn-toy-sm:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 0 0 0 var(--toy-shadow);
-}
-
-.btn-toy-icon {
-  padding: 0;
-  width: 2.5em;
-  height: 2.5em;
-  font-size: 1rem;
-  border-radius: 0.8em;
-  box-shadow: 0 3px 0 0 var(--toy-shadow);
-}
-
-.btn-toy-icon:hover:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: 0 2px 0 0 var(--toy-shadow);
-}
-
-.btn-toy-icon:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 0 0 0 var(--toy-shadow);
-}
-
-.btn-toy-primary {
-  --toy-border: #5a9bc2;
-  --toy-bg: #eaf7ff;
-  --toy-bg-hover: #d3eeff;
-  --toy-shadow: #bce6fb;
-  --toy-text: #1e3a4a;
-}
-
-.dark .btn-toy-primary {
-  --toy-border: #3d7a9e;
-  --toy-bg: #16323f;
-  --toy-bg-hover: #1c3f4e;
-  --toy-shadow: #0d222b;
-  --toy-text: #d6f0ff;
-}
-
-.btn-toy-danger {
-  --toy-border: #c2748a;
-  --toy-bg: #fff0f0;
-  --toy-bg-hover: #ffe0e2;
-  --toy-shadow: #fecdd3;
-  --toy-text: #4a2230;
-}
-
-.dark .btn-toy-danger {
-  --toy-border: #9e5468;
-  --toy-bg: #3a1e26;
-  --toy-bg-hover: #47252f;
-  --toy-shadow: #2a1519;
-  --toy-text: #ffe1e6;
-}
-
-.btn-toy-neutral {
-  --toy-border: #d4d4d8;
-  --toy-bg: #ffffff;
-  --toy-bg-hover: #fafafa;
-  --toy-shadow: #e4e4e7;
-  --toy-text: #3f3f46;
-}
-
-.dark .btn-toy-neutral {
-  --toy-border: #52525b;
-  --toy-bg: #3f3f46;
-  --toy-bg-hover: #52525b;
-  --toy-shadow: #18181b;
-  --toy-text: #e4e4e7;
+  /* biome-ignore-end lint/complexity/noImportantStyles: end reduced-motion override */
 }

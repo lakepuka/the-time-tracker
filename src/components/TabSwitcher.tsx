@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { PlusIcon } from "@/components/icons";
 import type { Tab } from "@/lib/tabs";
 
 type TabSwitcherProps = {
@@ -14,11 +15,6 @@ type TabSwitcherProps = {
   addTabLabel: string;
   nameInputLabel: string;
 };
-
-const activeTabClass =
-  "shrink-0 whitespace-nowrap rounded-full border-2 border-sky-400 bg-sky-100 px-3 py-1.5 text-sm font-bold text-sky-900 dark:border-sky-700 dark:bg-sky-950 dark:text-sky-100";
-const inactiveTabClass =
-  "shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-bold text-zinc-600 transition-colors hover:bg-zinc-200 dark:text-zinc-300 dark:hover:bg-zinc-700";
 
 export function TabSwitcher({
   tabs,
@@ -40,7 +36,7 @@ export function TabSwitcher({
   }, [namingTabId]);
 
   return (
-    <div className="scrollbar-thin flex min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-full border-2 border-zinc-200 bg-white p-1.5 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+    <div className="scrollbar-thin flex min-w-0 items-center gap-1.5 overflow-x-auto py-0.5">
       {tabs.map((tab) => {
         if (tab.id === namingTabId) {
           return (
@@ -55,7 +51,7 @@ export function TabSwitcher({
               onKeyDown={(event) => {
                 if (event.key === "Enter") event.currentTarget.blur();
               }}
-              className="field-sizing-content min-w-[4rem] max-w-[12rem] shrink-0 rounded-full border-2 border-sky-400 bg-sky-100 px-3 py-1.5 text-sm font-bold text-sky-900 focus:outline-none focus:ring-2 focus:ring-sky-300 dark:border-sky-700 dark:bg-sky-950 dark:text-sky-100"
+              className="field field--boxed field-sizing-content min-w-[4rem] max-w-[12rem] shrink-0 text-[0.78rem]"
             />
           );
         }
@@ -68,19 +64,14 @@ export function TabSwitcher({
             type="button"
             aria-current={isActive}
             onClick={() => onSelectTab(tab.id)}
-            className={isActive ? activeTabClass : inactiveTabClass}
+            className="tab"
           >
             {tab.name}
           </button>
         );
       })}
-      <button
-        type="button"
-        aria-label={addTabLabel}
-        onClick={onAddTab}
-        className="btn-toy btn-toy-icon btn-toy-primary shrink-0 !text-lg"
-      >
-        +
+      <button type="button" aria-label={addTabLabel} onClick={onAddTab} className="tab-add">
+        <PlusIcon className="h-3.5 w-3.5" />
       </button>
     </div>
   );

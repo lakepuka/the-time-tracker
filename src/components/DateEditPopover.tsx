@@ -64,16 +64,16 @@ export function DateEditPopover({
         {label}
       </button>
       {isOpen && (
-        <div className="absolute left-0 top-full z-10 mt-1 flex flex-col gap-2 rounded border border-zinc-300 bg-white p-2 shadow-md dark:border-zinc-600 dark:bg-zinc-800">
+        <div className="absolute left-0 top-full z-10 mt-1 flex flex-col gap-2 border border-[color:var(--edge-strong)] bg-paper p-2">
           <div className="flex items-center gap-1 text-xs">
             <input
               type="number"
               aria-label={t.yearInputLabel}
               value={draft.year}
               onChange={(event) => handleFieldChange("year", event)}
-              className="w-14 rounded border border-zinc-300 px-1 py-0.5 dark:border-zinc-600 dark:bg-zinc-900"
+              className="field field--boxed mono w-16"
             />
-            <span>{t.yearInputLabel}</span>
+            <span className="text-muted">{t.yearInputLabel}</span>
             <input
               type="number"
               aria-label={t.monthInputLabel}
@@ -81,9 +81,9 @@ export function DateEditPopover({
               max={12}
               value={draft.month}
               onChange={(event) => handleFieldChange("month", event)}
-              className="w-11 rounded border border-zinc-300 px-1 py-0.5 dark:border-zinc-600 dark:bg-zinc-900"
+              className="field field--boxed mono w-12"
             />
-            <span>{t.monthInputLabel}</span>
+            <span className="text-muted">{t.monthInputLabel}</span>
             <input
               type="number"
               aria-label={t.dayInputLabel}
@@ -91,18 +91,14 @@ export function DateEditPopover({
               max={31}
               value={draft.day}
               onChange={(event) => handleFieldChange("day", event)}
-              className="w-11 rounded border border-zinc-300 px-1 py-0.5 dark:border-zinc-600 dark:bg-zinc-900"
+              className="field field--boxed mono w-12"
             />
-            <span>{t.dayInputLabel}</span>
-            <span className="text-zinc-500 dark:text-zinc-400">
+            <span className="text-muted">{t.dayInputLabel}</span>
+            <span className="mono text-muted">
               ({weekdayLabel(draft.year, draft.month, draft.day, language)})
             </span>
           </div>
-          <button
-            type="button"
-            onClick={handleOk}
-            className="rounded bg-indigo-600 px-2 py-1 text-xs font-medium text-white hover:bg-indigo-700"
-          >
+          <button type="button" onClick={handleOk} className="chip w-full">
             {t.ok}
           </button>
         </div>

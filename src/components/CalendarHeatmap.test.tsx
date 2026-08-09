@@ -31,7 +31,7 @@ describe("CalendarHeatmap", () => {
       />,
     );
 
-    expect(screen.getByText("2026年07月")).toBeInTheDocument();
+    expect(screen.getByText("2026 / 07")).toBeInTheDocument();
     expect(screen.getByText("日")).toBeInTheDocument();
     expect(screen.getByText("土")).toBeInTheDocument();
   });
@@ -79,11 +79,11 @@ describe("CalendarHeatmap", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "前の月" }));
-    expect(screen.getByText("2026年06月")).toBeInTheDocument();
+    expect(screen.getByText("2026 / 06")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "次の月" }));
     fireEvent.click(screen.getByRole("button", { name: "次の月" }));
-    expect(screen.getByText("2026年08月")).toBeInTheDocument();
+    expect(screen.getByText("2026 / 08")).toBeInTheDocument();
   });
 
   it("calls onSelectDate with the date when a day is clicked", () => {

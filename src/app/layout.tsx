@@ -1,15 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Rubik } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
-const rubik = Rubik({
-  variable: "--font-rubik",
+/* Sans for text and buttons, mono for every numeral and ledger label. */
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
+  // The single canonical origin. Records live in localStorage, which is scoped
+  // per origin, so the app must only ever be reachable from one hostname.
+  metadataBase: new URL("https://the-time-tracker.lakepuka.com"),
+  alternates: { canonical: "/" },
   title: "The Time Tracker",
   description: "A simple, local-only time tracker",
   appleWebApp: {
@@ -20,7 +31,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#4f46e5",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfaf6" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f151c" },
+  ],
 };
 
 const COLOR_SCHEME_INIT_SCRIPT = `
@@ -39,7 +53,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${rubik.variable} h-full antialiased`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${plexSans.variable} ${plexMono.variable} h-full`}
+      suppressHydrationWarning
+    >
       <head>
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static inline script must run before paint to prevent a theme flash */}
         <script dangerouslySetInnerHTML={{ __html: COLOR_SCHEME_INIT_SCRIPT }} />

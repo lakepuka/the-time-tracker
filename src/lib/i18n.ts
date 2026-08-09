@@ -24,7 +24,9 @@ export function saveLanguage(language: Language): void {
 export type Translations = {
   start: string;
   stop: string;
-  trackingSince: string;
+  measuringSince: string;
+  idleLast: string;
+  stopped: string;
   settingsLabel: string;
   theme: string;
   light: string;
@@ -39,6 +41,7 @@ export type Translations = {
   deleteTabConfirm: string;
   monthlyTotal: string;
   thisMonth: string;
+  total: string;
   records: string;
   csvExport: string;
   csvImport: string;
@@ -67,7 +70,9 @@ export type Translations = {
 const ja: Translations = {
   start: "開始",
   stop: "終了",
-  trackingSince: "{value}から計測中",
+  measuringSince: "計測中 開始 {value}",
+  idleLast: "停止中 直近 {value}",
+  stopped: "停止中",
   settingsLabel: "設定",
   theme: "テーマ",
   light: "ライト",
@@ -82,6 +87,7 @@ const ja: Translations = {
   deleteTabConfirm: "「{value}」タブとその記録を削除しますか？",
   monthlyTotal: "月ごとの合計時間",
   thisMonth: "今月",
+  total: "合計",
   records: "記録",
   csvExport: "CSVエクスポート",
   csvImport: "CSVインポート",
@@ -110,7 +116,9 @@ const ja: Translations = {
 const en: Translations = {
   start: "Start",
   stop: "Stop",
-  trackingSince: "Tracking since {value}",
+  measuringSince: "Tracking · since {value}",
+  idleLast: "Idle · last {value}",
+  stopped: "Idle",
   settingsLabel: "Settings",
   theme: "Theme",
   light: "Light",
@@ -125,6 +133,7 @@ const en: Translations = {
   deleteTabConfirm: 'Delete the "{value}" tab and all its records?',
   monthlyTotal: "Monthly Totals",
   thisMonth: "This month",
+  total: "Total",
   records: "Records",
   csvExport: "Export CSV",
   csvImport: "Import CSV",
