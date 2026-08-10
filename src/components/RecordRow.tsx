@@ -4,10 +4,16 @@ import { type ChangeEvent, useState } from "react";
 import { DateEditPopover } from "@/components/DateEditPopover";
 import { CloseIcon } from "@/components/icons";
 import { combineDateAndTime, toDisplayDate, toTimeInputValue } from "@/lib/dateTimeInput";
-import { computeNetDurationMinutes, formatDurationMinutes } from "@/lib/duration";
+import {
+  computeNetDurationMinutes,
+  computeNetDurationSeconds,
+  formatDurationMinutes,
+  formatDurationSeconds,
+} from "@/lib/duration";
 import type { Language, Translations } from "@/lib/i18n";
 import { buildDatePatch } from "@/lib/recordEdits";
 import type { WorkRecord } from "@/lib/records";
+import type { TimerPrecision } from "@/lib/timerPrecision";
 
 type RecordRowProps = {
   record: WorkRecord;
@@ -15,10 +21,9 @@ type RecordRowProps = {
   onUpdate: (id: string, patch: Partial<Omit<WorkRecord, "id">>) => void;
   onDelete: (id: string) => void;
   language: Language;
+  precision: TimerPrecision;
   t: Translations;
 };
-
-const timeFieldClass = "field mono w-14 text-[12.5px] text-[color:var(--body-strong)]";
 
 export function RecordRow({
   record,
@@ -26,9 +31,14 @@ export function RecordRow({
   onUpdate,
   onDelete,
   language,
+  precision,
   t,
 }: RecordRowProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const withSeconds = precision === "second";
+  const timeFieldClass = `field mono text-[12.5px] text-[color:var(--body-strong)] ${
+    withSeconds ? "w-[5.25rem]" : "w-14"
+  }`;
 
   function handleDateChange(newDate: string) {
     onUpdate(record.id, buildDatePatch(record, newDate));
@@ -55,12 +65,28 @@ export function RecordRow({
     setIsConfirmingDelete(false);
   }
 
-  const netMinutes = record.endedAt
-    ? computeNetDurationMinutes(record.startedAt, record.endedAt, record.adjustmentMinutes ?? 0)
-    : null;
+  const durationLabel = record.endedAt
+    ? withSeconds
+      ? formatDurationSeconds(
+          computeNetDurationSeconds(
+            record.startedAt,
+            record.endedAt,
+            record.adjustmentMinutes ?? 0,
+          ),
+          language,
+        )
+      : formatDurationMinutes(
+          computeNetDurationMinutes(
+            record.startedAt,
+            record.endedAt,
+            record.adjustmentMinutes ?? 0,
+          ),
+          language,
+        )
+    : "—";
 
   return (
-    <div className="rec">
+    <div className="rec" data-sec={withSeconds}>
       <div className="rec__head">
         <DateEditPopover
           value={record.date}
@@ -78,8 +104,9 @@ export function RecordRow({
         <div className="flex items-center gap-1.5">
           <input
             type="time"
+            step={withSeconds ? 1 : undefined}
             aria-label={t.columnTime}
-            value={toTimeInputValue(record.startedAt)}
+            value={toTimeInputValue(record.startedAt, withSeconds)}
             onChange={(event) => handleTimeChange("startedAt", event)}
             className={timeFieldClass}
           />
@@ -89,13 +116,18 @@ export function RecordRow({
           {record.endedAt ? (
             <input
               type="time"
+              step={withSeconds ? 1 : undefined}
               aria-label={t.columnTime}
-              value={toTimeInputValue(record.endedAt)}
+              value={toTimeInputValue(record.endedAt, withSeconds)}
               onChange={(event) => handleTimeChange("endedAt", event)}
               className={timeFieldClass}
             />
           ) : (
-            <span className="mono w-14 text-[12.5px] text-live">{t.inProgress}</span>
+            <span
+              className={`mono text-[12.5px] text-live ${withSeconds ? "w-[5.25rem]" : "w-14"}`}
+            >
+              {t.inProgress}
+            </span>
           )}
         </div>
 
@@ -107,9 +139,7 @@ export function RecordRow({
           className="field mono w-12 text-right"
         />
 
-        <span className="mono text-[13px] font-semibold text-ink">
-          {netMinutes != null ? formatDurationMinutes(netMinutes, language) : "—"}
-        </span>
+        <span className="mono text-[13px] font-semibold text-ink">{durationLabel}</span>
       </div>
 
       <div className="rec__note min-w-0">

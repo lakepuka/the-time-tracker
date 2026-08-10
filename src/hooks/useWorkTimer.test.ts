@@ -258,4 +258,47 @@ describe("useWorkTimer", () => {
     expect(result.current.records.map((record) => record.id)).toEqual(["b"]);
     expect(loadRecords(TAB_ID).map((record) => record.id)).toEqual(["b"]);
   });
+
+  it("floors the start to the minute by default (minute precision)", () => {
+    const started = new Date(2026, 7, 10, 10, 40, 50);
+    const { result } = renderHook(() =>
+      useWorkTimer(TAB_ID, { now: () => started, createId: () => "id-1" }),
+    );
+
+    act(() => result.current.toggle());
+
+    expect(result.current.records[0].startedAt).toBe(
+      new Date(2026, 7, 10, 10, 40, 0).toISOString(),
+    );
+  });
+
+  it("floors both ends so a sub-minute session reads as 0, not a spanning minute", () => {
+    let current = new Date(2026, 7, 10, 10, 40, 50);
+    const { result } = renderHook(() =>
+      useWorkTimer(TAB_ID, { now: () => current, createId: () => "id-1" }),
+    );
+
+    act(() => result.current.toggle());
+    current = new Date(2026, 7, 10, 10, 41, 5);
+    act(() => result.current.toggle());
+
+    const record = result.current.records[0];
+    expect(record.startedAt).toBe(new Date(2026, 7, 10, 10, 40, 0).toISOString());
+    expect(record.endedAt).toBe(new Date(2026, 7, 10, 10, 41, 0).toISOString());
+  });
+
+  it("keeps the exact seconds when the tab uses second precision", () => {
+    const started = new Date(2026, 7, 10, 10, 40, 50);
+    const { result } = renderHook(() =>
+      useWorkTimer(TAB_ID, {
+        now: () => started,
+        createId: () => "id-1",
+        precision: "second",
+      }),
+    );
+
+    act(() => result.current.toggle());
+
+    expect(result.current.records[0].startedAt).toBe(started.toISOString());
+  });
 });

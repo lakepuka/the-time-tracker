@@ -11,6 +11,7 @@ import { TimerButton } from "@/components/TimerButton";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useShowSummary } from "@/hooks/useShowSummary";
 import { useTabs } from "@/hooks/useTabs";
+import { useTimerPrecisions } from "@/hooks/useTimerPrecisions";
 import { useWorkTimer } from "@/hooks/useWorkTimer";
 import { buildCsvFilename, recordsToCsv } from "@/lib/csv";
 import { toDateKeyFromDate } from "@/lib/dateTimeInput";
@@ -40,8 +41,12 @@ function downloadCsv(
 
 export default function Home() {
   const { tabs, activeTabId, setActiveTabId, addTab, removeTab, renameTab } = useTabs();
-  const { records, activeRecord, toggle, updateRecord, deleteRecord, importRecords } =
-    useWorkTimer(activeTabId);
+  const { getPrecision, setPrecision } = useTimerPrecisions(tabs);
+  const activePrecision = getPrecision(activeTabId);
+  const { records, activeRecord, toggle, updateRecord, deleteRecord, importRecords } = useWorkTimer(
+    activeTabId,
+    { precision: activePrecision },
+  );
   const { language, setLanguage, t } = useLanguage();
   const { showSummary, setShowSummary } = useShowSummary();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -138,6 +143,7 @@ export default function Home() {
           onDelete={deleteRecord}
           expandDate={selectedDate}
           language={language}
+          precision={activePrecision}
           t={t}
         />
       </div>
@@ -168,7 +174,7 @@ export default function Home() {
             <span className="mono text-[13px] font-bold tracking-[0.22em] text-[color:var(--ink-logo)] uppercase">
               The Time Tracker
             </span>
-            <span className="mono text-[10.5px] text-muted">v2 / local only</span>
+            <span className="mono text-[10.5px] text-muted">local only</span>
           </div>
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-initial sm:justify-end">
             <TabSwitcher
@@ -192,6 +198,8 @@ export default function Home() {
               onChangeLanguage={setLanguage}
               showSummary={showSummary}
               onChangeShowSummary={setShowSummary}
+              getPrecision={getPrecision}
+              onChangePrecision={setPrecision}
               t={t}
             />
           </div>

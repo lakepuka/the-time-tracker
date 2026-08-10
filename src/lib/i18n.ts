@@ -35,6 +35,10 @@ export type Translations = {
   language: string;
   summary: string;
   tabsLabel: string;
+  trackingUnit: string;
+  unitMinute: string;
+  unitSecond: string;
+  precisionAriaLabel: string;
   newTabPlaceholder: string;
   add: string;
   deleteTabAriaLabel: string;
@@ -81,6 +85,10 @@ const ja: Translations = {
   language: "言語",
   summary: "サマリー",
   tabsLabel: "タブ",
+  trackingUnit: "計測単位",
+  unitMinute: "分",
+  unitSecond: "秒",
+  precisionAriaLabel: "{value}の計測単位",
   newTabPlaceholder: "新しいタブ名",
   add: "追加",
   deleteTabAriaLabel: "{value}を削除",
@@ -127,6 +135,10 @@ const en: Translations = {
   language: "Language",
   summary: "Summary",
   tabsLabel: "Tabs",
+  trackingUnit: "Tracking unit",
+  unitMinute: "min",
+  unitSecond: "sec",
+  precisionAriaLabel: "Tracking unit for {value}",
   newTabPlaceholder: "New tab name",
   add: "Add",
   deleteTabAriaLabel: "Delete {value}",

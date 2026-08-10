@@ -9,6 +9,7 @@ import { formatDurationMinutes, sumNetDurationMinutes } from "@/lib/duration";
 import { groupRecordsByYearAndMonth, type MonthGroup } from "@/lib/groupRecordsByMonth";
 import type { Language, Translations } from "@/lib/i18n";
 import type { WorkRecord } from "@/lib/records";
+import { DEFAULT_TIMER_PRECISION, type TimerPrecision } from "@/lib/timerPrecision";
 
 type RecordsTableProps = {
   tabId: string;
@@ -17,6 +18,7 @@ type RecordsTableProps = {
   onDelete: (id: string) => void;
   expandDate?: string | null;
   language: Language;
+  precision?: TimerPrecision;
   t: Translations;
 };
 
@@ -62,13 +64,17 @@ type MonthTableProps = {
   onUpdate: RecordsTableProps["onUpdate"];
   onDelete: RecordsTableProps["onDelete"];
   language: Language;
+  precision: TimerPrecision;
   t: Translations;
 };
 
-function MonthTable({ monthGroup, onUpdate, onDelete, language, t }: MonthTableProps) {
+function MonthTable({ monthGroup, onUpdate, onDelete, language, precision, t }: MonthTableProps) {
   return (
     <div className="border-t-[1.5px] border-[color:var(--rule-top)]">
-      <div className="rec-headrow ledger-label !text-[0.5625rem] !tracking-[0.1em] text-muted">
+      <div
+        className="rec-headrow ledger-label !text-[0.5625rem] !tracking-[0.1em] text-muted"
+        data-sec={precision === "second"}
+      >
         <span>{t.columnDate}</span>
         <span>{t.columnTime}</span>
         <span className="text-right">{t.columnAdjustment}</span>
@@ -84,6 +90,7 @@ function MonthTable({ monthGroup, onUpdate, onDelete, language, t }: MonthTableP
           onUpdate={onUpdate}
           onDelete={onDelete}
           language={language}
+          precision={precision}
           t={t}
         />
       ))}
@@ -98,6 +105,7 @@ export function RecordsTable({
   onDelete,
   expandDate = null,
   language,
+  precision = DEFAULT_TIMER_PRECISION,
   t,
 }: RecordsTableProps) {
   const { isCollapsed, toggle, expand } = useCollapsedGroups(tabId);
@@ -157,6 +165,7 @@ export function RecordsTable({
                           onUpdate={onUpdate}
                           onDelete={onDelete}
                           language={language}
+                          precision={precision}
                           t={t}
                         />
                       )}

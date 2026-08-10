@@ -430,6 +430,11 @@
       grid-template-columns: 108px 150px 50px 66px minmax(0, 1fr) 1.5rem;
     }
 
+    /* Second precision shows HH:MM:SS times and H:M:S durations — both wider. */
+    .rec[data-sec="true"] {
+      grid-template-columns: 108px 196px 50px 92px minmax(0, 1fr) 1.5rem;
+    }
+
     .rec__head {
       display: contents;
     }
@@ -452,6 +457,10 @@
       column-gap: 0.625rem;
       padding: 0 0.125rem 0.375rem;
       grid-template-columns: 108px 150px 50px 66px minmax(0, 1fr) 1.5rem;
+    }
+
+    .rec-headrow[data-sec="true"] {
+      grid-template-columns: 108px 196px 50px 92px minmax(0, 1fr) 1.5rem;
     }
   }
 

@@ -4,13 +4,16 @@ export function pad2(value: number): string {
   return String(value).padStart(2, "0");
 }
 
-export function toTimeInputValue(iso: string): string {
+export function toTimeInputValue(iso: string, withSeconds = false): string {
   const d = new Date(iso);
-  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  const base = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  return withSeconds ? `${base}:${pad2(d.getSeconds())}` : base;
 }
 
 export function combineDateAndTime(dateValue: string, timeValue: string): string {
-  return new Date(`${dateValue}T${timeValue}:00`).toISOString();
+  // `timeValue` is "HH:MM" (minute inputs) or "HH:MM:SS" (second inputs).
+  const time = timeValue.length > 5 ? timeValue : `${timeValue}:00`;
+  return new Date(`${dateValue}T${time}`).toISOString();
 }
 
 export function toDisplayDate(dateKey: string): string {

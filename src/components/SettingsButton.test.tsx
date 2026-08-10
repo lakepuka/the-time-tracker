@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getTranslations } from "@/lib/i18n";
 import type { Tab } from "@/lib/tabs";
@@ -248,6 +248,25 @@ describe("SettingsButton", () => {
         memo: "客先訪問",
       },
     ]);
+  });
+
+  it("reflects and changes a tab's tracking precision", () => {
+    const onChangePrecision = vi.fn();
+    renderSettings({
+      getPrecision: () => "minute",
+      onChangePrecision,
+    });
+    fireEvent.click(screen.getByRole("button", { name: "設定" }));
+
+    const group = screen.getByRole("group", { name: "タイマーの計測単位" });
+    const minute = within(group).getByRole("button", { name: "分" });
+    const second = within(group).getByRole("button", { name: "秒" });
+
+    expect(minute).toHaveAttribute("aria-pressed", "true");
+    expect(second).toHaveAttribute("aria-pressed", "false");
+
+    fireEvent.click(second);
+    expect(onChangePrecision).toHaveBeenCalledWith("default", "second");
   });
 
   it("shows English labels throughout when given English translations", () => {

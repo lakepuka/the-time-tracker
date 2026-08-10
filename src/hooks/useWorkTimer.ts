@@ -4,10 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toDateKeyFromDate } from "@/lib/dateTimeInput";
 import { loadRecords, saveRecords, type WorkRecord } from "@/lib/records";
 import { splitRecordAcrossDays } from "@/lib/splitRecordAcrossDays";
+import { DEFAULT_TIMER_PRECISION, floorToMinute, type TimerPrecision } from "@/lib/timerPrecision";
 
 type UseWorkTimerDeps = {
   now?: () => Date;
   createId?: () => string;
+  /** Minute (default) floors start/stop to the whole minute; second keeps it exact. */
+  precision?: TimerPrecision;
 };
 
 const defaultNow = () => new Date();
@@ -16,6 +19,7 @@ const defaultCreateId = () => crypto.randomUUID();
 export function useWorkTimer(tabId: string, deps: UseWorkTimerDeps = {}) {
   const now = deps.now ?? defaultNow;
   const createId = deps.createId ?? defaultCreateId;
+  const precision = deps.precision ?? DEFAULT_TIMER_PRECISION;
 
   const [records, setRecords] = useState<WorkRecord[]>([]);
 
@@ -38,7 +42,9 @@ export function useWorkTimer(tabId: string, deps: UseWorkTimerDeps = {}) {
   );
 
   const toggle = useCallback(() => {
-    const current = now();
+    // In minute mode both ends are floored so the record reads as whole minutes,
+    // matching the HH:MM display; second mode keeps the exact instant.
+    const current = precision === "second" ? now() : floorToMinute(now());
 
     if (activeRecord) {
       const segments = splitRecordAcrossDays(activeRecord, current, createId);
@@ -55,7 +61,7 @@ export function useWorkTimer(tabId: string, deps: UseWorkTimerDeps = {}) {
       adjustmentMinutes: 0,
     };
     commitRecords([...records, newRecord]);
-  }, [activeRecord, createId, now, commitRecords, records]);
+  }, [activeRecord, createId, now, precision, commitRecords, records]);
 
   const updateRecord = useCallback(
     (id: string, patch: Partial<Omit<WorkRecord, "id">>) => {

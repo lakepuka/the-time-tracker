@@ -1,7 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <circle cx="16" cy="16" r="15" fill="#4f46e5" />
-  <circle cx="16" cy="16" r="11" fill="#ffffff" />
-  <line x1="16" y1="16" x2="14.76" y2="11.67" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" />
-  <line x1="16" y1="16" x2="17.46" y2="22.85" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" />
-  <circle cx="16" cy="16" r="1.5" fill="#4f46e5" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs><clipPath id="tile"><rect width="512" height="512" rx="112"/></clipPath></defs>
+  <rect width="512" height="512" rx="112" fill="#1e2a3d"/>
+  <g stroke="#3d5170" stroke-width="1.6" stroke-opacity="0.5" clip-path="url(#tile)"><line x1="56" y1="0" x2="56" y2="512"/><line x1="0" y1="56" x2="512" y2="56"/><line x1="112" y1="0" x2="112" y2="512"/><line x1="0" y1="112" x2="512" y2="112"/><line x1="168" y1="0" x2="168" y2="512"/><line x1="0" y1="168" x2="512" y2="168"/><line x1="224" y1="0" x2="224" y2="512"/><line x1="0" y1="224" x2="512" y2="224"/><line x1="280" y1="0" x2="280" y2="512"/><line x1="0" y1="280" x2="512" y2="280"/><line x1="336" y1="0" x2="336" y2="512"/><line x1="0" y1="336" x2="512" y2="336"/><line x1="392" y1="0" x2="392" y2="512"/><line x1="0" y1="392" x2="512" y2="392"/><line x1="448" y1="0" x2="448" y2="512"/><line x1="0" y1="448" x2="512" y2="448"/><line x1="504" y1="0" x2="504" y2="512"/><line x1="0" y1="504" x2="512" y2="504"/></g>
+  
+    <g fill="none" stroke="#efe7d2" stroke-linecap="round">
+      <path d="M405.2,271.7 A150,150 0 1 0 331,385.9" stroke-width="13"/>
+      <line x1="256" y1="256" x2="341" y2="171" stroke-width="24"/>
+    </g>
+    <circle cx="256" cy="256" r="25" fill="#efe7d2"/>
+    <circle cx="256" cy="168" r="9" fill="#efe7d2"/><circle cx="344" cy="256" r="9" fill="#efe7d2"/><circle cx="256" cy="344" r="9" fill="#efe7d2"/><circle cx="168" cy="256" r="9" fill="#efe7d2"/>
 </svg>

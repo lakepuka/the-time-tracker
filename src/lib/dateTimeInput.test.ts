@@ -30,7 +30,25 @@ describe("toTimeInputValue", () => {
   });
 });
 
+describe("toTimeInputValue with seconds", () => {
+  it("appends seconds when asked", () => {
+    const iso = new Date(2026, 6, 5, 10, 30, 45).toISOString();
+    expect(toTimeInputValue(iso, true)).toBe("10:30:45");
+  });
+
+  it("omits seconds by default", () => {
+    const iso = new Date(2026, 6, 5, 10, 30, 45).toISOString();
+    expect(toTimeInputValue(iso)).toBe("10:30");
+  });
+});
+
 describe("combineDateAndTime", () => {
+  it("accepts an HH:MM:SS time value", () => {
+    const iso = combineDateAndTime("2026-07-05", "10:30:45");
+    expect(new Date(iso).getSeconds()).toBe(45);
+    expect(toTimeInputValue(iso, true)).toBe("10:30:45");
+  });
+
   it("combines a date input value and a time input value into an ISO string", () => {
     const iso = combineDateAndTime("2026-07-05", "10:30");
     const expected = new Date(2026, 6, 5, 10, 30, 0).toISOString();

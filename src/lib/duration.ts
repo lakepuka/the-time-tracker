@@ -36,3 +36,22 @@ export function formatDurationMinutes(totalMinutes: number, language: Language =
   const minutes = totalMinutes % 60;
   return language === "en" ? `${hours}h ${minutes}m` : `${hours}時間${minutes}分`;
 }
+
+/** Net duration in whole seconds, for second-precision trackers. */
+export function computeNetDurationSeconds(
+  startedAt: string,
+  endedAt: string,
+  adjustmentMinutes = 0,
+): number {
+  const raw = Math.floor((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 1000);
+  return Math.max(0, raw - adjustmentMinutes * 60);
+}
+
+export function formatDurationSeconds(totalSeconds: number, language: Language = "ja"): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return language === "en"
+    ? `${hours}h ${minutes}m ${seconds}s`
+    : `${hours}時間${minutes}分${seconds}秒`;
+}

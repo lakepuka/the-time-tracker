@@ -9,6 +9,7 @@ import type { ColorSchemeMode } from "@/lib/colorScheme";
 import { formatTemplate, LANGUAGES, type Language, type Translations } from "@/lib/i18n";
 import type { WorkRecord } from "@/lib/records";
 import type { Tab } from "@/lib/tabs";
+import { DEFAULT_TIMER_PRECISION, type TimerPrecision } from "@/lib/timerPrecision";
 
 type SettingsButtonProps = {
   tabs: Tab[];
@@ -20,6 +21,8 @@ type SettingsButtonProps = {
   onChangeLanguage: (language: Language) => void;
   showSummary: boolean;
   onChangeShowSummary: (value: boolean) => void;
+  getPrecision?: (tabId: string) => TimerPrecision;
+  onChangePrecision?: (tabId: string, precision: TimerPrecision) => void;
   t: Translations;
 };
 
@@ -88,6 +91,45 @@ function SegmentedControl<T extends string>({
   );
 }
 
+type PrecisionToggleProps = {
+  value: TimerPrecision;
+  onChange: (precision: TimerPrecision) => void;
+  label: string;
+  t: Translations;
+};
+
+/** Compact per-tab unit switch: 分 | 秒. */
+function PrecisionToggle({ value, onChange, label, t }: PrecisionToggleProps) {
+  const options: { id: TimerPrecision; text: string }[] = [
+    { id: "minute", text: t.unitMinute },
+    { id: "second", text: t.unitSecond },
+  ];
+  return (
+    <fieldset
+      aria-label={label}
+      className="m-0 flex min-w-0 shrink-0 border border-[color:var(--tab-idle-edge)] p-0"
+    >
+      {options.map((option, index) => (
+        <button
+          key={option.id}
+          type="button"
+          aria-pressed={value === option.id}
+          onClick={() => onChange(option.id)}
+          className={`min-h-6 px-2 py-0.5 text-[0.6875rem] ${
+            index > 0 ? "border-l border-[color:var(--tab-idle-edge)]" : ""
+          } ${
+            value === option.id
+              ? "bg-[color:var(--field-bg)] font-semibold text-[color:var(--brand)]"
+              : "text-[color:var(--muted)] hover:text-[color:var(--brand)]"
+          }`}
+        >
+          {option.text}
+        </button>
+      ))}
+    </fieldset>
+  );
+}
+
 export function SettingsButton({
   tabs,
   onAddTab,
@@ -98,6 +140,8 @@ export function SettingsButton({
   onChangeLanguage,
   showSummary,
   onChangeShowSummary,
+  getPrecision = () => DEFAULT_TIMER_PRECISION,
+  onChangePrecision = () => {},
   t,
 }: SettingsButtonProps) {
   const { isOpen, setIsOpen, containerRef } = usePopover<HTMLDivElement>();
@@ -150,8 +194,11 @@ export function SettingsButton({
             <Toggle label={t.summary} checked={showSummary} onChange={onChangeShowSummary} />
           </div>
 
-          <h2 className={sectionLabel}>{t.tabsLabel}</h2>
-          <ul className="mb-2 flex flex-col gap-1">
+          <div className="mb-2 flex items-baseline justify-between">
+            <h2 className="ledger-label !text-[0.625rem] text-muted">{t.tabsLabel}</h2>
+            <span className="text-[0.625rem] text-muted">{t.trackingUnit}</span>
+          </div>
+          <ul className="mb-2 flex flex-col gap-1.5">
             {tabs.map((tab) => (
               <li key={tab.id} className="flex items-center gap-2">
                 <input
@@ -159,6 +206,12 @@ export function SettingsButton({
                   value={tab.name}
                   onChange={(event) => onRenameTab(tab.id, event.target.value)}
                   className="field min-w-0 flex-1"
+                />
+                <PrecisionToggle
+                  value={getPrecision(tab.id)}
+                  onChange={(precision) => onChangePrecision(tab.id, precision)}
+                  label={formatTemplate(t.precisionAriaLabel, tab.name)}
+                  t={t}
                 />
                 {tabs.length > 1 && (
                   <button

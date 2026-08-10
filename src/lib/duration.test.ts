@@ -2,9 +2,41 @@ import { describe, expect, it } from "vitest";
 import {
   computeDurationMinutes,
   computeNetDurationMinutes,
+  computeNetDurationSeconds,
   formatDurationMinutes,
+  formatDurationSeconds,
   sumNetDurationMinutes,
 } from "./duration";
+
+describe("computeNetDurationSeconds", () => {
+  it("returns whole seconds between start and end", () => {
+    expect(computeNetDurationSeconds("2026-08-10T10:40:50.000Z", "2026-08-10T10:41:05.000Z")).toBe(
+      15,
+    );
+  });
+
+  it("subtracts the adjustment (given in minutes) as seconds", () => {
+    expect(
+      computeNetDurationSeconds("2026-08-10T10:00:00.000Z", "2026-08-10T10:05:00.000Z", 2),
+    ).toBe(180);
+  });
+
+  it("never goes negative", () => {
+    expect(computeNetDurationSeconds("2026-08-10T10:00:30.000Z", "2026-08-10T10:00:00.000Z")).toBe(
+      0,
+    );
+  });
+});
+
+describe("formatDurationSeconds", () => {
+  it("formats hours, minutes and seconds in Japanese", () => {
+    expect(formatDurationSeconds(3675)).toBe("1時間1分15秒");
+  });
+
+  it("formats hours, minutes and seconds in English", () => {
+    expect(formatDurationSeconds(3675, "en")).toBe("1h 1m 15s");
+  });
+});
 
 describe("computeDurationMinutes", () => {
   it("computes whole minutes between start and end", () => {
