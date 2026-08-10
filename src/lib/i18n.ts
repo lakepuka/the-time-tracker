@@ -68,7 +68,6 @@ export type Translations = {
   monthInputLabel: string;
   dayInputLabel: string;
   addTabLabel: string;
-  defaultTabName: string;
 };
 
 const ja: Translations = {
@@ -118,7 +117,6 @@ const ja: Translations = {
   monthInputLabel: "月",
   dayInputLabel: "日",
   addTabLabel: "タブを追加",
-  defaultTabName: "タイマー",
 };
 
 const en: Translations = {
@@ -168,7 +166,6 @@ const en: Translations = {
   monthInputLabel: "Month",
   dayInputLabel: "Day",
   addTabLabel: "Add tab",
-  defaultTabName: "Timer",
 };
 
 const TRANSLATIONS: Record<Language, Translations> = { ja, en };

@@ -12,7 +12,7 @@ describe("useTabs", () => {
   it("starts with a single default tab active", () => {
     const { result } = renderHook(() => useTabs());
 
-    expect(result.current.tabs).toEqual([{ id: DEFAULT_TAB_ID, name: "Timer" }]);
+    expect(result.current.tabs).toEqual([{ id: DEFAULT_TAB_ID, name: "Timer1" }]);
     expect(result.current.activeTabId).toBe(DEFAULT_TAB_ID);
   });
 
@@ -37,7 +37,7 @@ describe("useTabs", () => {
     });
 
     expect(result.current.tabs).toEqual([
-      { id: DEFAULT_TAB_ID, name: "Timer" },
+      { id: DEFAULT_TAB_ID, name: "Timer1" },
       { id: "new-tab", name: "副業B" },
     ]);
     expect(result.current.activeTabId).toBe("new-tab");
@@ -89,7 +89,7 @@ describe("useTabs", () => {
       result.current.removeTab(DEFAULT_TAB_ID);
     });
 
-    expect(result.current.tabs).toEqual([{ id: DEFAULT_TAB_ID, name: "Timer" }]);
+    expect(result.current.tabs).toEqual([{ id: DEFAULT_TAB_ID, name: "Timer1" }]);
   });
 
   it("renames a tab and persists the change", () => {

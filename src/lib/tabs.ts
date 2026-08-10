@@ -4,15 +4,18 @@ export type Tab = {
 };
 
 export const DEFAULT_TAB_ID = "default";
-export const DEFAULT_TAB: Tab = { id: DEFAULT_TAB_ID, name: "Timer" };
+
+/** Timers are named Timer1, Timer2, … — language-agnostic, no space. */
+export const DEFAULT_TAB_BASE = "Timer";
+export const DEFAULT_TAB: Tab = { id: DEFAULT_TAB_ID, name: `${DEFAULT_TAB_BASE}1` };
 
 export function generateTabName(existingTabs: Tab[], baseName: string): string {
   const used = new Set(existingTabs.map((tab) => tab.name));
   let n = 1;
-  while (used.has(`${baseName} ${n}`)) {
+  while (used.has(`${baseName}${n}`)) {
     n++;
   }
-  return `${baseName} ${n}`;
+  return `${baseName}${n}`;
 }
 
 const TABS_KEY = "work-timer-tabs";

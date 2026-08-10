@@ -22,7 +22,7 @@ import {
 } from "@/lib/duration";
 import { formatTemplate, type Language } from "@/lib/i18n";
 import { formatMonthLabel } from "@/lib/monthlySummary";
-import { generateTabName } from "@/lib/tabs";
+import { DEFAULT_TAB_BASE, generateTabName } from "@/lib/tabs";
 
 function downloadCsv(
   records: Parameters<typeof recordsToCsv>[0],
@@ -93,7 +93,7 @@ export default function Home() {
   function handleFinishNaming(id: string) {
     const tab = tabs.find((candidate) => candidate.id === id);
     if (tab && tab.name.trim() === "") {
-      renameTab(id, generateTabName(tabs, t.defaultTabName));
+      renameTab(id, generateTabName(tabs, DEFAULT_TAB_BASE));
     }
     setNamingTabId(null);
   }
