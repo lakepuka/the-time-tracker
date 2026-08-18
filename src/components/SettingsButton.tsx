@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CloseIcon, SettingsIcon } from "@/components/icons";
+import { CloseIcon, ExternalLinkIcon, SettingsIcon } from "@/components/icons";
 import { useColorSchemeMode } from "@/hooks/useColorSchemeMode";
 import { useCsvImport } from "@/hooks/useCsvImport";
 import { usePopover } from "@/hooks/usePopover";
@@ -254,6 +254,19 @@ export function SettingsButton({
           <button type="button" onClick={triggerImport} className="chip mt-4 w-full">
             {t.csvImport}
           </button>
+
+          {/* Quiet footer link — deliberately not styled as a setting row. */}
+          <div className="mt-4 border-t border-[color:var(--edge-weak)] pt-2 text-center">
+            <a
+              href="https://lakepuka.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[0.6875rem] text-muted hover:text-[color:var(--brand)]"
+            >
+              {t.moreApps}
+              <ExternalLinkIcon className="h-3 w-3" />
+            </a>
+          </div>
         </div>
       )}
     </div>

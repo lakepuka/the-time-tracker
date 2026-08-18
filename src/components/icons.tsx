@@ -14,6 +14,24 @@ const stroke = {
   strokeWidth: 1,
 };
 
+/** Box with an arrow leaving the top-right — a link that opens off-site. */
+export function ExternalLinkIcon({ className = "h-3 w-3" }: IconProps) {
+  return (
+    <svg
+      {...stroke}
+      className={className}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M7 3.75H3.75v8.5h8.5V9" />
+      <path d="M9.5 3.75h2.75V6.5" />
+      <path d="M12.25 3.75 7.5 8.5" />
+    </svg>
+  );
+}
+
 export function PlusIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg {...stroke} className={className} aria-hidden="true" focusable="false">

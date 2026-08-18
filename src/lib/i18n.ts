@@ -49,6 +49,7 @@ export type Translations = {
   records: string;
   csvExport: string;
   csvImport: string;
+  moreApps: string;
   csvImportSuccess: string;
   csvImportError: string;
   noRecords: string;
@@ -98,6 +99,7 @@ const ja: Translations = {
   records: "記録",
   csvExport: "CSVエクスポート",
   csvImport: "CSVインポート",
+  moreApps: "lakepuka の他のアプリ",
   csvImportSuccess: "{value}件の記録をインポートしました",
   csvImportError: "CSVファイルの読み込みに失敗しました",
   noRecords: "記録がありません",
@@ -147,6 +149,7 @@ const en: Translations = {
   records: "Records",
   csvExport: "Export CSV",
   csvImport: "Import CSV",
+  moreApps: "More apps by lakepuka",
   csvImportSuccess: "Imported {value} record(s)",
   csvImportError: "Failed to read the CSV file",
   noRecords: "No records yet",

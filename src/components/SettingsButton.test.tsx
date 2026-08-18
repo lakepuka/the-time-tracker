@@ -269,6 +269,16 @@ describe("SettingsButton", () => {
     expect(onChangePrecision).toHaveBeenCalledWith("default", "second");
   });
 
+  it("shows a footer link to lakepuka.com that opens safely in a new tab", () => {
+    renderSettings();
+    fireEvent.click(screen.getByRole("button", { name: "設定" }));
+
+    const link = screen.getByRole("link", { name: /lakepuka/ });
+    expect(link).toHaveAttribute("href", "https://lakepuka.com");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
   it("shows English labels throughout when given English translations", () => {
     renderSettings({ language: "en", t: getTranslations("en") });
 
