@@ -182,7 +182,7 @@ export function SettingsButton({
         <SettingsIcon className="h-4 w-4" />
       </button>
       {isOpen && (
-        <div className="absolute right-0 top-full z-20 mt-2 w-68 border border-[color:var(--edge-strong)] bg-paper p-3">
+        <div className="absolute right-0 top-full z-20 mt-2 w-68 max-w-[calc(100vw-1.5rem)] border border-[color:var(--edge-strong)] bg-paper p-3">
           <h2 className={sectionLabel}>{t.theme}</h2>
           <SegmentedControl options={modeOptions} value={mode} onChange={setMode} />
 

@@ -176,7 +176,7 @@ export default function Home() {
             </span>
             <span className="mono text-[10.5px] text-muted">local only</span>
           </div>
-          <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-initial sm:justify-end">
+          <div className="flex min-w-0 flex-1 items-center justify-between gap-2 sm:flex-initial sm:justify-end">
             <TabSwitcher
               tabs={tabs}
               activeTabId={activeTabId}
