@@ -2,7 +2,7 @@
 
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { DateEditPopover } from "@/components/DateEditPopover";
-import { CloseIcon } from "@/components/icons";
+import { CloseIcon, TrashIcon } from "@/components/icons";
 import { combineDateAndTime, toDisplayDate, toTimeInputValue } from "@/lib/dateTimeInput";
 import {
   computeNetDurationMinutes,
@@ -182,13 +182,15 @@ export function RecordRow({
         )}
       </div>
 
-      <div className="rec__del">
+      <div className="rec__del relative">
         {isConfirmingDelete ? (
-          <div className="flex items-center gap-1">
+          // Floated over the row so the confirm buttons aren't crushed by the
+          // narrow delete column.
+          <div className="absolute top-1/2 right-0 z-10 flex -translate-y-1/2 items-center gap-1 border border-[color:var(--edge-strong)] bg-paper px-1.5 py-1">
             <button
               type="button"
               onClick={handleConfirmDelete}
-              className="chip !min-h-0 border-[color:var(--stop)] px-2 py-0.5 text-[color:var(--stop)] hover:!border-[color:var(--stop-hover)] hover:!text-[color:var(--stop-hover)]"
+              className="chip !min-h-0 border-[color:var(--stop)] px-2 py-0.5 whitespace-nowrap text-[color:var(--stop)] hover:!border-[color:var(--stop-hover)] hover:!text-[color:var(--stop-hover)]"
             >
               {t.deleteLabel}
             </button>
@@ -208,7 +210,7 @@ export function RecordRow({
             onClick={() => setIsConfirmingDelete(true)}
             className="text-[color:var(--del)] hover:text-[color:var(--stop)]"
           >
-            <CloseIcon className="h-3.5 w-3.5" />
+            <TrashIcon className="h-4 w-4" />
           </button>
         )}
       </div>

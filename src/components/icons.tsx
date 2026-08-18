@@ -14,6 +14,25 @@ const stroke = {
   strokeWidth: 1,
 };
 
+/** Waste bin — unambiguously "delete this record" (not "clear the field"). */
+export function TrashIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg
+      {...stroke}
+      className={className}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M2.75 4.5h10.5" />
+      <path d="M6.25 4.5V3.25h3.5V4.5" />
+      <path d="M4.3 4.5l.55 8.35a1 1 0 0 0 1 .9h4.3a1 1 0 0 0 1-.9L11.7 4.5" />
+      <path d="M6.75 6.9v4.2M9.25 6.9v4.2" />
+    </svg>
+  );
+}
+
 /** Box with an arrow leaving the top-right — a link that opens off-site. */
 export function ExternalLinkIcon({ className = "h-3 w-3" }: IconProps) {
   return (
