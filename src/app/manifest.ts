@@ -7,7 +7,10 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "The Time Tracker",
     short_name: "Time Tracker",
-    description: "A simple, local-only time tracker",
+    description:
+      "Free, local-only work-hours and habit tracker. One-tap start/stop, no account, works offline, exports to CSV.",
+    categories: ["productivity", "utilities"],
+    lang: "en",
     start_url: "/",
     display: "standalone",
     // Cream paper and the indigo brand accent.
