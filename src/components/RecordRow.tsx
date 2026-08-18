@@ -1,6 +1,6 @@
 "use client";
 
-import { type ChangeEvent, useState } from "react";
+import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { DateEditPopover } from "@/components/DateEditPopover";
 import { CloseIcon } from "@/components/icons";
 import { combineDateAndTime, toDisplayDate, toTimeInputValue } from "@/lib/dateTimeInput";
@@ -10,7 +10,7 @@ import {
   formatDurationMinutes,
   formatDurationSeconds,
 } from "@/lib/duration";
-import type { Language, Translations } from "@/lib/i18n";
+import { formatTemplate, type Language, type Translations } from "@/lib/i18n";
 import { buildDatePatch } from "@/lib/recordEdits";
 import type { WorkRecord } from "@/lib/records";
 import type { TimerPrecision } from "@/lib/timerPrecision";
@@ -35,10 +35,21 @@ export function RecordRow({
   t,
 }: RecordRowProps) {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const memoRef = useRef<HTMLInputElement>(null);
+
   const withSeconds = precision === "second";
+  const hasNote = (record.memo ?? "").trim() !== "";
+  const showMemo = hasNote || noteOpen;
+
   const timeFieldClass = `field mono text-[12.5px] text-[color:var(--body-strong)] ${
     withSeconds ? "w-[5.25rem]" : "w-14"
   }`;
+
+  // Focus the note field only when it was just opened, not for existing notes.
+  useEffect(() => {
+    if (noteOpen) memoRef.current?.focus();
+  }, [noteOpen]);
 
   function handleDateChange(newDate: string) {
     onUpdate(record.id, buildDatePatch(record, newDate));
@@ -85,16 +96,22 @@ export function RecordRow({
         )
     : "—";
 
+  const displayDate = toDisplayDate(record.date);
+
   return (
     <div className="rec" data-sec={withSeconds}>
       <div className="rec__head">
+        {/* Repeated dates read cleaner blank; still editable, and labelled for a11y. */}
         <DateEditPopover
           value={record.date}
           onChange={handleDateChange}
-          label={isSameDateAsPrevious ? "〃" : toDisplayDate(record.date)}
+          label={isSameDateAsPrevious ? "" : displayDate}
+          triggerAriaLabel={
+            isSameDateAsPrevious ? formatTemplate(t.editDateLabel, displayDate) : undefined
+          }
           triggerClassName={
             isSameDateAsPrevious
-              ? "mono block w-full text-left text-xs text-muted hover:text-brand"
+              ? "mono block min-h-6 w-full rounded-none text-left hover:bg-[color:var(--row-hover)]"
               : "field mono block w-full text-left text-[color:var(--body-strong)]"
           }
           language={language}
@@ -140,17 +157,29 @@ export function RecordRow({
         />
 
         <span className="mono text-[13px] font-semibold text-ink">{durationLabel}</span>
-      </div>
 
-      <div className="rec__note min-w-0">
-        <input
-          type="text"
-          aria-label={t.columnMemo}
-          value={record.memo ?? ""}
-          onChange={handleMemoChange}
-          placeholder={t.columnMemo}
-          className="field w-full text-[color:var(--body)]"
-        />
+        {/* Notes stay out of the way until there's something to show. */}
+        {showMemo ? (
+          <div className="min-w-0 basis-full sm:basis-auto">
+            <input
+              ref={memoRef}
+              type="text"
+              aria-label={t.columnMemo}
+              value={record.memo ?? ""}
+              onChange={handleMemoChange}
+              placeholder={t.columnMemo}
+              className="field w-full text-[color:var(--body)]"
+            />
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setNoteOpen(true)}
+            className="mono whitespace-nowrap text-[0.75rem] text-muted hover:text-[color:var(--brand)]"
+          >
+            + {t.addNote}
+          </button>
+        )}
       </div>
 
       <div className="rec__del">

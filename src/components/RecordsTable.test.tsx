@@ -124,7 +124,7 @@ describe("RecordsTable", () => {
     });
   });
 
-  it("shows the date only on the first row of a run of same-dated records, using 〃 for the rest", () => {
+  it("shows the date only on the first row of a run of same-dated records, leaving the rest blank", () => {
     const sameDateRecord: WorkRecord = {
       id: "3",
       date: "2026-07-05",
@@ -142,11 +142,14 @@ describe("RecordsTable", () => {
       />,
     );
 
+    // First row shows the date; the repeated row is blank (no ditto mark), but
+    // still an editable control labelled for accessibility.
     expect(screen.getByRole("button", { name: "2026/07/05" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "〃" })).toBeInTheDocument();
+    expect(screen.queryByText("〃")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "2026/07/05 の日付を編集" })).toBeInTheDocument();
   });
 
-  it("opens the date popover for just that row when 〃 is clicked", () => {
+  it("opens the date popover for just that row when the blank date cell is clicked", () => {
     const onUpdate = vi.fn();
     const sameDateRecord: WorkRecord = {
       id: "3",
@@ -166,8 +169,8 @@ describe("RecordsTable", () => {
     );
 
     // Rows sort most-recent-first, so the 13:00 record (sameDateRecord) shows
-    // the full date and the 10:00 record (finishedRecord) shows 〃.
-    fireEvent.click(screen.getByRole("button", { name: "〃" }));
+    // the full date and the 10:00 record (finishedRecord) has the blank cell.
+    fireEvent.click(screen.getByRole("button", { name: "2026/07/05 の日付を編集" }));
     fireEvent.change(screen.getByLabelText("日"), { target: { value: "9" } });
     fireEvent.click(screen.getByRole("button", { name: "OK" }));
 
@@ -216,7 +219,7 @@ describe("RecordsTable", () => {
     expect(onUpdate).toHaveBeenCalledWith("1", { memo: "客先訪問" });
   });
 
-  it("renders an empty memo input when a record has no memo", () => {
+  it("keeps notes collapsed until added, then reveals an empty input", () => {
     render(
       <RecordsTable
         tabId="test-tab"
@@ -227,6 +230,11 @@ describe("RecordsTable", () => {
         onDelete={() => {}}
       />,
     );
+
+    // A record with no memo shows no note field, only an "add note" affordance.
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /メモを追加/ }));
 
     expect(screen.getByRole("textbox")).toHaveValue("");
   });

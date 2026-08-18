@@ -9,6 +9,8 @@ type DateEditPopoverProps = {
   value: string;
   onChange: (newDate: string) => void;
   label: ReactNode;
+  /** Accessible name for the trigger when `label` renders no visible text. */
+  triggerAriaLabel?: string;
   triggerClassName?: string;
   language: Language;
   t: Translations;
@@ -33,6 +35,7 @@ export function DateEditPopover({
   value,
   onChange,
   label,
+  triggerAriaLabel,
   triggerClassName,
   language,
   t,
@@ -60,7 +63,12 @@ export function DateEditPopover({
 
   return (
     <div ref={containerRef} className="relative block w-full">
-      <button type="button" onClick={handleOpen} className={triggerClassName}>
+      <button
+        type="button"
+        aria-label={triggerAriaLabel}
+        onClick={handleOpen}
+        className={triggerClassName}
+      >
         {label}
       </button>
       {isOpen && (

@@ -58,6 +58,8 @@ export type Translations = {
   columnAdjustment: string;
   columnDuration: string;
   columnMemo: string;
+  addNote: string;
+  editDateLabel: string;
   inProgress: string;
   deleteLabel: string;
   cancel: string;
@@ -108,6 +110,8 @@ const ja: Translations = {
   columnAdjustment: "調整(分)",
   columnDuration: "稼働時間",
   columnMemo: "備考",
+  addNote: "メモを追加",
+  editDateLabel: "{value} の日付を編集",
   inProgress: "稼働中",
   deleteLabel: "削除",
   cancel: "キャンセル",
@@ -158,6 +162,8 @@ const en: Translations = {
   columnAdjustment: "Adj. (min)",
   columnDuration: "Duration",
   columnMemo: "Notes",
+  addNote: "Add note",
+  editDateLabel: "Edit date {value}",
   inProgress: "In progress",
   deleteLabel: "Delete",
   cancel: "Cancel",
