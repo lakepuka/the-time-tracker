@@ -26,15 +26,33 @@ localStorage に入る（`output: "export"` の静的サイト）。純粋ロジ
 - `src/components/` は振る舞いを持つものだけテストする。表示専用
   （`Card` `icons` `DaySpan` など）は対象外。
 - `pnpm test` / `pnpm test:watch`（Vitest + React Testing Library、jsdom は
-  `vitest.config.ts` で全体既定）。coverage・e2e の設定は無い。
+  `vitest.config.ts` で全体既定）。coverage の設定は無い。
+- E2E は Playwright（`e2e/*.spec.ts`、設定は `playwright.config.ts`）。
+  `pnpm test:e2e`（ヘッドレス）/ `pnpm test:e2e:ui`（UI モード）で実行する。
+  `next dev` を自動起動するが、既に起動中ならそれに繋ぐ（1ディレクトリ1
+  dev サーバーの制約に合わせている）。初回のみ
+  `pnpm exec playwright install chromium` でブラウザ本体を取得する必要がある
+  （pnpm の依存関係ではないので `pnpm install` では入らない）。各テストは
+  Playwright 既定の新規ブラウザコンテキストで動くため localStorage は毎回空
+  で始まり、手動クリーンアップは不要。
 - 完了前に `pnpm test` と `pnpm exec biome check .` が通ることを確認する。
-  型は `pnpm exec tsc --noEmit`（下記の既知エラーを除いて）。
+  型は `pnpm exec tsc --noEmit`（下記の既知エラーを除いて）。E2E
+  (`pnpm test:e2e`) はブラウザ本体の取得が必要なため、必須のゲートには含めず
+  UI に触れる変更をしたときに実行する。
 
 ## Git
 
 - コミットはユーザーから明示的な指示があったときのみ行う。
 - コミットメッセージは英語。
 - push はユーザー自身が行う。
+- **`main` への push は CI（[.github/workflows/ci.yml](.github/workflows/ci.yml)）が自動で
+  Cloudflare に本番デプロイする。** `check` ジョブ（Biome / Vitest / Playwright /
+  build）を通過した push のみ `deploy` ジョブが走り、`pnpm deploy`
+  （`next build && wrangler deploy`）を実行する。認証は
+  `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` の Actions secrets
+  （リポジトリの Settings → Secrets and variables → Actions で設定、
+  未設定だと deploy ジョブが失敗する）。つまり `main` への push はそのまま
+  本番反映になるので、push 前の確認は普段以上に重要。
 
 ## 罠
 
